@@ -1,0 +1,45 @@
+﻿@page
+@model OrdersPageModel
+
+<h1>Órdenes</h1>
+
+<form method="get">
+    <div class="form-group">
+        <label for="filtro">Buscar por referencia:</label>
+        <input type="text" id="filtro" name="FiltroReferencia" value="@Model.FiltroReferencia" class="form-control" />
+        <button type="submit" class="btn btn-primary mt-2">Buscar</button>
+    </div>
+</form>
+
+@if (Model.OrdersList?.Any() == true)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Referencia</th>
+                <th>Observación Cliente</th>
+                <th>Observación Taller</th>
+                <th>Empleado</th>
+                <th>Vehículo</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in Model.OrdersList)
+            {
+                <tr>
+                    <td>@order.Id</td>
+                    <td>@order.OrderRef</td>
+                    <td>@order.CustomerRemark</td>
+                    <td>@order.ServiceCenterRemark</td>
+                    <td>@order._Employees?.EmployeeName</td>
+                    <td>@order._Vehicle?.Plate</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No hay órdenes disponibles.</p>
+}

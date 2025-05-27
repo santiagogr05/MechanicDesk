@@ -1,0 +1,43 @@
+﻿@page
+@model tu_proyecto.Pages.SalesModel
+@{
+    ViewData["Title"] = "Ventas";
+}
+
+<h2>Ventas</h2>
+
+<form method="post" asp-page-handler="Buscar">
+    <input asp-for="Filtro.SaleRef" placeholder="Buscar por referencia" />
+    <button type="submit">Buscar</button>
+</form>
+
+@if (Model.Lista != null && Model.Lista.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Referencia</th>
+                <th>Método de Pago</th>
+                <th>Total</th>
+                <th>Orden ID</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var venta in Model.Lista)
+            {
+                <tr>
+                    <td>@venta.Id</td>
+                    <td>@venta.SaleRef</td>
+                    <td>@venta._PaymentMethod?.PaymentMethod</td>
+                    <td>@venta.Total.ToString("C")</td>
+                    <td>@venta.OrderId</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No hay ventas para mostrar.</p>
+}
