@@ -1,0 +1,27 @@
+﻿using lib_dominio.Entidades;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+
+namespace lib_repositorio.Interfaces
+{
+    public interface IConexion
+    {
+        string? StringConexion { get; set; }
+
+        DbSet<Sales>? Sales { get; set; }
+        DbSet<Customers>? Customers { get; set; }
+        DbSet<Vehicles>? Vehicles { get; set; }
+        DbSet<Employees>? Employees { get; set; }
+        DbSet<Orders>? Orders { get; set; }
+        DbSet<OrderServices>? OrderServices { get; set; }
+        DbSet<ServicesProducts>? ServicesProducts { get; set; }
+        DbSet<Services>? Services { get; set; }
+        DbSet<Products>? Products { get; set; }
+        DbSet<Brands>? Brands { get; set; }
+        DbSet<PaymentMethods>? PaymentMethods { get; set; }
+        DbSet<Categories>? Categories { get; set; }
+
+        EntityEntry<T> Entry<T>(T entity) where T : class;
+        int SaveChanges();
+    }
+}
