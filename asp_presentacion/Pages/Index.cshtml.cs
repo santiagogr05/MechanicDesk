@@ -10,6 +10,8 @@ namespace asp_presentacion.Pages
         [BindProperty] public string? Email { get; set; }
         [BindProperty] public string? Contrasena { get; set; }
 
+        
+
         public void OnGet()
         {
             var variable_session = HttpContext.Session.GetString("Usuario");
@@ -33,7 +35,7 @@ namespace asp_presentacion.Pages
             }
         }
 
-        public void OnPostBtEnter()
+        public IActionResult OnPostBtEnter()
         {
             try
             {
@@ -41,36 +43,40 @@ namespace asp_presentacion.Pages
                     string.IsNullOrEmpty(Contrasena))
                 {
                     OnPostBtClean();
-                    return;
+                    return Page();
                 }
 
                 if ("admin.admin" != Email + "." + Contrasena)
                 {
                     OnPostBtClean();
-                    return;
+                    return Page();
                 }
                 ViewData["Logged"] = true;
                 HttpContext.Session.SetString("Usuario", Email!);
-                EstaLogueado = true;
+                //EstaLogueado = true;
+
                 OnPostBtClean();
+                return RedirectToPage("Vistas/Home");
             }
             catch (Exception ex)
             {
                 LogConversor.Log(ex, ViewData!);
+                return Page();
             }
         }
 
-        public void OnPostBtClose()
+        public IActionResult OnPostBtClose()
         {
             try
             {
                 HttpContext.Session.Clear();
-                HttpContext.Response.Redirect("/");
-                EstaLogueado = false;
+                return RedirectToPage("/Index");
+
             }
             catch (Exception ex)
             {
                 LogConversor.Log(ex, ViewData!);
+                return Page();
             }
         }
     }
