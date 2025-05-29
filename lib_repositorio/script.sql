@@ -450,5 +450,46 @@ BEGIN
 END;
 GO
 
+--Tabla de Usuarios
+
+CREATE TABLE [Users](
+	[Id] INT IDENTITY(1,1) PRIMARY KEY,
+	[UserName] NVARCHAR(50) UNIQUE NOT NULL,
+	[PasswordHash] NVARCHAR(50) UNIQUE NOT NULL
+);
+
+--Tabla de Roles
+CREATE TABLE [Roles](
+	[Id] INT IDENTITY(1,1) PRIMARY KEY,
+	[RoleName] NVARCHAR(100) UNIQUE NOT NULL,
+);
+
+--Tabla de Permisos
+CREATE TABLE [Permissions](
+	[Id] INT IDENTITY(1,1) PRIMARY KEY,
+	[PermissionName] NVARCHAR(100) NOT NULL,
+	[Description] NVARCHAR(200)
+);
+
+-- Tabla de Usuarios Roles
+CREATE TABLE [UsersRoles](
+	[Id] INT IDENTITY(1,1) PRIMARY KEY,
+	[UserId] INT REFERENCES [Users](Id),
+	[RoleId] INT REFERENCES [Roles](Id)
+);
+
+-- Tabla de Roles Permisos
+CREATE TABLE [RolesPermissions](
+	[Id] INT IDENTITY(1,1) PRIMARY KEY,
+	[RoleId] INT REFERENCES [Roles](Id),
+	[PermissionId] INT REFERENCES [Permissions](Id)
+);
+
+
+
+
+
+
+
 
 
