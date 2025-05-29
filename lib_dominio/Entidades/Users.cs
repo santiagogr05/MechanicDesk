@@ -6,5 +6,6 @@ namespace lib_dominio.Entidades
         public int Id { get; set; }
         public string? UserName { get; set; }
         public string? PasswordHash { get; set; }
+        public List<UsersRoles>? UsersRoles { get; set; }
     }
 }
