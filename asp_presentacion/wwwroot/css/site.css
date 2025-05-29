@@ -27,7 +27,12 @@ body {
     background-color: #B9CDB1;
 }
 
-.container{
+/*.container{
     width : 100%;
     height : 100%;
+}*/
+main{
+    background-color:palegreen;
+    width:100%;
+    height:100%;
 }

@@ -2,7 +2,7 @@
 @model IndexModel
 
 @section Styles {
-    <link rel="stylesheet" href="~/css/index.css" />
+    <link rel="stylesheet" href="~/css/index.css?v=@DateTime.Now.Ticks" />
 }
 
 @{
@@ -11,31 +11,32 @@
 @if (!Model.EstaLogueado)
 {
     <div class="container">
-        <h3>
-            Login
-        </h3>
+        
+       
+        <div class="container-login">
 
-        <div>
-            <div class="container-login">
-                <form method="POST">
-                    <div class="container-usuario">
-                        <input onchange="keyUp(this)"
-                               asp-for="@Model.Email"
-                               class="input-usuario" placeholder="Usuario" />
-                    </div>
-                    <div class="container-contrasenha">
-                        <input type="password"
-                               onchange="keyUp(this)"
-                               asp-for="@Model.Contrasena"
-                               class="input-contrasenha" placeholder="Contraseña" />
-                    </div>
+            <h3>
+                Login
+            </h3>
 
-                    <input type="submit"
-                           value="Iniciar Sesión"
-                           asp-page-handler="BtEnter"
-                           class="btn-iniciar-sesion" />
-                </form>
-            </div>
+            <form method="POST">
+                <div class="container-usuario">
+                    <input onchange="keyUp(this)"
+                            asp-for="@Model.Email"
+                            class="input-usuario" placeholder="Usuario" />
+                </div>
+                <div class="container-contrasenha">
+                    <input type="password"
+                            onchange="keyUp(this)"
+                            asp-for="@Model.Contrasena"
+                            class="input-contrasenha" placeholder="Contraseña" />
+                </div>
+
+                <input type="submit"
+                        value="Iniciar Sesión"
+                        asp-page-handler="BtEnter"
+                        class="btn-iniciar-sesion" />
+            </form>
         </div>
     </div>
 }

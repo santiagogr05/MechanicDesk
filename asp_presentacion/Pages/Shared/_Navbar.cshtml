@@ -1,46 +1,46 @@
 ﻿@* @model asp_presentacion.Pages.Shared.NavbarModel *@
-@{
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/navbar.css?v=@DateTime.Now.Ticks" />
 }
+
 <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
     <div class="container">
         <h2>Workshop</h2>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-            <ul class="navbar-nav flex-grow-1">
-                <li class="nav-item">
-                    <a class="nav-link text-dark" asp-area="" asp-page="/Ventanas/Brands">Marcas</a>
+        
+        <div class="container-navbar">
+            <ul class="container-navbar_list">
+                <li class="navbar-item">
+                    <a class="navbar-item-anchor" asp-area="" asp-page="/Ventanas/Brands">Marcas</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link text-dark" asp-area="" asp-page="/Ventanas/Categories">Categorias</a>
+                <li class="navbar-item">
+                    <a class="navbar-item-anchor" asp-area="" asp-page="/Ventanas/Categories">Categorias</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link text-dark" asp-area="" asp-page="/Ventanas/Customers">Clientes</a>
+                <li class="navbar-item">
+                    <a class="navbar-item-anchor" asp-area="" asp-page="/Ventanas/Customers">Clientes</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link text-dark" asp-area="" asp-page="/Ventanas/Employees">Empleados</a>
+                <li class="navbar-item">
+                    <a class="navbar-item-anchor" asp-area="" asp-page="/Ventanas/Employees">Empleados</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link text-dark" asp-area="" asp-page="/Ventanas/Orders">Ordenes</a>
+                <li class="navbar-item">
+                    <a class="navbar-item-anchor" asp-area="" asp-page="/Ventanas/Orders">Ordenes</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link text-dark" asp-area="" asp-page="/Ventanas/PaymentMethods">Metodos de Pago</a>
+                <li class="navbar-item">
+                    <a class="navbar-item_anchor" asp-area="" asp-page="/Ventanas/PaymentMethods">Metodos de Pago</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link text-dark" asp-area="" asp-page="/Ventanas/Products">Productos</a>
+                <li class="navbar-item">
+                    <a class="navbar-item-anchor" asp-area="" asp-page="/Ventanas/Products">Productos</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link text-dark" asp-area="" asp-page="/Ventanas/Sales">Ventas</a>
+                <li class="navbar-item">
+                    <a class="navbar-item-anchor" asp-area="" asp-page="/Ventanas/Sales">Ventas</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link text-dark" asp-area="" asp-page="/Ventanas/Services">Servicios</a>
+                <li class="navbar-item">
+                    <a class="navbar-item-anchor" asp-area="" asp-page="/Ventanas/Services">Servicios</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link text-dark" asp-area="" asp-page="/Ventanas/Vehicles">Vehiculos</a>
+                <li class="navbar-item">
+                    <a class="navbar-item-anchor" asp-area="" asp-page="/Ventanas/Vehicles">Vehiculos</a>
                 </li>
-                <li class="nav-item">
+                <li class="navbar-list">
                     <form method="post" asp-page-handler="BtClose" asp-page="/Index">
                         <input type="submit" value="Cerrar sesión" class="btn btn-danger" />
                     </form>
