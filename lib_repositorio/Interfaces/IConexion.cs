@@ -21,6 +21,11 @@ namespace lib_repositorio.Interfaces
         DbSet<PaymentMethods>? PaymentMethods { get; set; }
         DbSet<Categories>? Categories { get; set; }
 
+        DbSet<Users>? Users { get; set; }
+        DbSet<UsersRoles>? UsersRoles { get; set; }
+        DbSet<Roles>? Roles { get; set; }
+        DbSet<RolesPermissions>? RolesPermissions { get; set; }
+        DbSet<Permissions>? Permissions { get; set; }
         EntityEntry<T> Entry<T>(T entity) where T : class;
         int SaveChanges();
     }
