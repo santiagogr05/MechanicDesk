@@ -115,7 +115,7 @@ namespace lib_aplicaciones.Implementaciones
                 .FirstOrDefault(x => x.Id == entidad.Id);
         }
 
-        public Users? ValidarCredenciales(string nombreUsuario, string password)
+        public bool ValidarCredenciales(string nombreUsuario, string password)
         {
             if (string.IsNullOrEmpty(nombreUsuario) || string.IsNullOrEmpty(password))
                 throw new Exception("lbFaltaInformacion");
@@ -125,15 +125,11 @@ namespace lib_aplicaciones.Implementaciones
                 .FirstOrDefault(x => x.UserName == nombreUsuario);
 
             if (user == null)
-                return null;
+                return false;
 
             // Verificar contraseña
-            bool isValid = VerifyPassword(password, user.PasswordHash);
+            return VerifyPassword(password, user.PasswordHash);
 
-            if (!isValid)
-                return null;
-
-            return user;
         }
 
         public bool AsignarRol(int userId, int roleId)

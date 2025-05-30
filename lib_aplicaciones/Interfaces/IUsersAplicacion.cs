@@ -11,7 +11,7 @@ namespace lib_aplicaciones.Interfaces
         Users? Modificar(Users? entidad);
         Users? Borrar(Users? entidad);
         List<Users>? Listar();
-        Users? ValidarCredenciales(string nombreUsuario, string password);
+        bool ValidarCredenciales(string nombreUsuario, string password);
         bool AsignarRol(int userId, int roleId);
     }
 }
