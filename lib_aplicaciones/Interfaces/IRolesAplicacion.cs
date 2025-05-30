@@ -8,8 +8,9 @@ namespace lib_aplicaciones.Interfaces
         Roles? CrearRol(Roles? entidad);
         Roles? Modificar(Roles? entidad);
         Roles? Borrar(Roles? entidad);
-        Roles? Listar();
-        bool AsignarPermisosRol(int roleId, int permissionId);
-        bool RemoverPermisosRol(int roleId, int permissionId);
+        List<Roles> Listar();
+        //List<Users>? ObtenerUsuarios(Roles? entidad);
+        Roles? BuscarPorNombre(Roles? entidad);
+
     }
 }

@@ -8,8 +8,10 @@ namespace lib_aplicaciones.Interfaces
         Users? CrearUsuario(Users? entidad);
         Users? ObtenerPorUserName(Users? entidad);
         Users? ObtenerPorId(Users? entidad);
+        Users? Modificar(Users? entidad);
+        Users? Borrar(Users? entidad);
+        List<Users>? Listar();
         Users? ValidarCredenciales(string nombreUsuario, string password);
         bool AsignarRol(int userId, int roleId);
-        List<Permissions> obtenerPermisos(int userId);
     }
 }

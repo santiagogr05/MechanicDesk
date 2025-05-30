@@ -9,7 +9,6 @@ namespace lib_dominio.Entidades
         public string? RoleName{ get; set; }
         [JsonIgnore]
         public List<Users>? UsersList { get; set; }
-        [JsonIgnore]
-        public List<RolesPermissions>? RolesPermissionsList { get; set; }
+        
     }
 }

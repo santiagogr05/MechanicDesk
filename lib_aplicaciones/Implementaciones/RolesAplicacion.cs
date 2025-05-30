@@ -143,5 +143,10 @@ namespace lib_aplicaciones.Implementaciones
                 return false;
             }
         }
+
+        public List<Roles> Listar()
+        {
+            return this.IConexion!.Roles!.Take(20).ToList();
+        }
     }
 }

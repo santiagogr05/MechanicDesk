@@ -26,11 +26,13 @@ namespace lib_aplicaciones.Implementaciones
         {
             if (entidad == null)
                 throw new Exception("lbFaltaInformacion");
-            if (entidad.Id == 0)
-                throw new Exception("lbNoSeGuardo");
+            if (entidad.Id != 0)
+                throw new Exception("lbYaSeGuardo");
 
             // Verificar si el nombre de usuario ya existe
-            var existingUser = ObtenerPorUserName(entidad);
+            var existingUser = this.IConexion!.Users!
+                .FirstOrDefault(u => u.UserName == entidad.UserName);
+
             if (existingUser != null)
                 throw new Exception("lbUsuarioYaExiste");
 
@@ -42,13 +44,64 @@ namespace lib_aplicaciones.Implementaciones
             return entidad;
         }
 
+        public Users? Modificar(Users? entidad)
+        {
+            if (entidad == null)
+                throw new Exception("lbFaltaInformacion");
+            if (entidad.Id == 0)
+                throw new Exception("lbNoSeGuardo");
+
+            // Verificar si el nombre de usuario ya existe (excluyendo este mismo usuario)
+            var existingUser = this.IConexion!.Users!
+                .FirstOrDefault(u => u.UserName == entidad.UserName && u.Id != entidad.Id);
+
+            if (existingUser != null)
+                throw new Exception("lbUsuarioYaExiste");
+
+            // Si se proporciona una nueva contraseña, hashearla
+            if (!string.IsNullOrEmpty(entidad.PasswordHash))
+            {
+                // Verificar si la contraseña ya está hasheada comparando con la almacenada
+                var storedUser = this.IConexion!.Users!.Find(entidad.Id);
+                if (storedUser != null && entidad.PasswordHash != storedUser.PasswordHash)
+                {
+                    entidad.PasswordHash = HashPassword(entidad.PasswordHash);
+                }
+            }
+
+            var entry = this.IConexion!.Entry<Users>(entidad);
+            entry.State = EntityState.Modified;
+            this.IConexion.SaveChanges();
+            return entidad;
+        }
+
+        public Users? Borrar(Users? entidad)
+        {
+            if (entidad == null)
+                throw new Exception("lbFaltaInformacion");
+            if (entidad.Id == 0)
+                throw new Exception("lbNoSeGuardo");
+
+            this.IConexion!.Users!.Remove(entidad);
+            this.IConexion.SaveChanges();
+            return entidad;
+        }
+
+        public List<Users>? Listar()
+        {
+            return this.IConexion!.Users!
+                .Include(u => u._Roles)
+                .Take(20)
+                .ToList();
+        }
+
         public Users? ObtenerPorUserName(Users? entidad)
         {
             if (entidad == null || string.IsNullOrEmpty(entidad.UserName))
                 throw new Exception("lbFaltaInformacion");
 
             return this.IConexion!.Users!
-                .Include(u => u.UsersRoles)
+                .Include(u => u._Roles)
                 .FirstOrDefault(x => x.UserName == entidad.UserName);
         }
 
@@ -58,7 +111,7 @@ namespace lib_aplicaciones.Implementaciones
                 throw new Exception("lbFaltaInformacion");
 
             return this.IConexion!.Users!
-                .Include(u => u.UsersRoles)
+                .Include(u => u._Roles)
                 .FirstOrDefault(x => x.Id == entidad.Id);
         }
 
@@ -68,7 +121,7 @@ namespace lib_aplicaciones.Implementaciones
                 throw new Exception("lbFaltaInformacion");
 
             var user = this.IConexion!.Users!
-                .Include(u => u.UsersRoles)
+                .Include(u => u._Roles)
                 .FirstOrDefault(x => x.UserName == nombreUsuario);
 
             if (user == null)
@@ -93,21 +146,8 @@ namespace lib_aplicaciones.Implementaciones
                 if (user == null || role == null)
                     return false;
 
-                // Verificar si la asignación ya existe
-                var existingAssignment = this.IConexion!.UsersRoles!
-                    .FirstOrDefault(ur => ur.UserId == userId && ur.RoleId == roleId);
-
-                if (existingAssignment != null)
-                    return true; // La asignación ya existe, consideramos que se realizó correctamente
-
-                // Crear nueva asignación
-                var userRole = new UsersRoles
-                {
-                    UserId = userId,
-                    RoleId = roleId
-                };
-
-                this.IConexion!.UsersRoles!.Add(userRole);
+                // Asignar rol al usuario
+                user.RoleId = roleId;
                 this.IConexion.SaveChanges();
                 return true;
             }
@@ -117,27 +157,8 @@ namespace lib_aplicaciones.Implementaciones
             }
         }
 
-        public List<Permissions> obtenerPermisos(int userId)
-        {
-            // Obtener todos los permisos asociados a los roles del usuario
-            var permisos = this.IConexion!.UsersRoles!
-                .Where(ur => ur.UserId == userId)
-                .Join(this.IConexion.RolesPermissions!,
-                    ur => ur.RoleId,
-                    rp => rp.RoleId,
-                    (ur, rp) => rp.PermissionId)
-                .Join(this.IConexion.Permissions!,
-                    permissionId => permissionId,
-                    permission => permission.Id,
-                    (permissionId, permission) => permission)
-                .Distinct()
-                .ToList();
-
-            return permisos;
-        }
-
         // Métodos de ayuda para el hash de contraseñas
-        private string HashPassword(string password)
+        private string HashPassword(string? password)
         {
             if (string.IsNullOrEmpty(password))
                 return string.Empty;
@@ -149,7 +170,7 @@ namespace lib_aplicaciones.Implementaciones
             }
         }
 
-        private bool VerifyPassword(string password, string hashedPassword)
+        private bool VerifyPassword(string password, string? hashedPassword)
         {
             if (string.IsNullOrEmpty(password) || string.IsNullOrEmpty(hashedPassword))
                 return false;
