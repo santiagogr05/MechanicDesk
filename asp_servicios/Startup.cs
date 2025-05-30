@@ -4,7 +4,10 @@ using lib_aplicaciones.Interfaces;
 using lib_repositorio.Implementaciones;
 using lib_repositorio.Interfaces;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
-
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using lib_dominio.Nucleo;
 namespace asp_servicios
 {
     public class Startup
@@ -20,6 +23,21 @@ namespace asp_servicios
         {
             services.Configure<KestrelServerOptions>(x => { x.AllowSynchronousIO = true; });
             services.Configure<IISServerOptions>(x => { x.AllowSynchronousIO = true; });
+
+            //JWT Autenticación
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(DatosGenerales.clave)),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ClockSkew = TimeSpan.Zero // Reduce el ti4empo de tolerancia para la expiración del token
+                };
+            });
+
             services.AddControllers();
             services.AddEndpointsApiExplorer();
             //services.AddSwaggerGen();
@@ -38,6 +56,8 @@ namespace asp_servicios
             services.AddScoped<IServicesAplicacion, ServicesAplicacion>();
             services.AddScoped<IServicesProductsAplicacion, ServicesProductsAplicacion>();
             services.AddScoped<IVehiclesAplicacion, VehiclesAplicacion>();
+            services.AddScoped<IUsersAplicacion, UsersAplicacion>();
+            services.AddScoped<RolesAplicacion, RolesAplicacion>();
             // Controladores
             services.AddScoped<TokenController, TokenController>();
 
@@ -56,6 +76,7 @@ namespace asp_servicios
                 app.UseExceptionHandler("/Error");
             }
             app.UseHttpsRedirection();
+            app.UseAuthentication();
             app.UseAuthorization();
             app.MapControllers();
             app.UseCors();
