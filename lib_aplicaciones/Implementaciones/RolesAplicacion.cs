@@ -24,8 +24,8 @@ namespace lib_aplicaciones.Implementaciones
         {
             if (entidad == null)
                 throw new Exception("lbFaltaInformacion");
-            if (entidad.Id == 0)
-                throw new Exception("lbNoSeGuardo");
+            if (entidad.Id != 0)
+                throw new Exception("lbYaSeGuardo");
 
             // Verificar si el nombre del rol ya existe
             var existingRole = this.IConexion!.Roles!
@@ -67,86 +67,43 @@ namespace lib_aplicaciones.Implementaciones
                 throw new Exception("lbNoSeGuardo");
 
             // Verificar si el rol está asignado a algún usuario
-            var hasUsers = this.IConexion!.UsersRoles!
-                .Any(ur => ur.RoleId == entidad.Id);
+            var hasUsers = this.IConexion!.Users!
+                .Any(u => u.RoleId == entidad.Id);
 
             if (hasUsers)
                 throw new Exception("lbRolAsignadoUsuarios");
-
-            // Eliminar primero los permisos asociados al rol
-            var rolePermissions = this.IConexion!.RolesPermissions!
-                .Where(rp => rp.RoleId == entidad.Id)
-                .ToList();
-
-            foreach (var rp in rolePermissions)
-            {
-                this.IConexion.RolesPermissions!.Remove(rp);
-            }
 
             this.IConexion!.Roles!.Remove(entidad);
             this.IConexion.SaveChanges();
             return entidad;
         }
 
-        public bool AsignarPermisosRol(int roleId, int permissionId)
-        {
-            try
-            {
-                var role = this.IConexion!.Roles!.Find(roleId);
-                var permission = this.IConexion!.Permissions!.Find(permissionId);
-
-                if (role == null || permission == null)
-                    return false;
-
-                // Verificar si la asignación ya existe
-                var existingAssignment = this.IConexion!.RolesPermissions!
-                    .FirstOrDefault(rp => rp.RoleId == roleId && rp.PermissionId == permissionId);
-
-                if (existingAssignment != null)
-                    return true; // La asignación ya existe, consideramos que se realizó correctamente
-
-                // Crear nueva asignación
-                var rolePermission = new RolesPermissions
-                {
-                    RoleId = roleId,
-                    PermissionId = permissionId
-                };
-
-                this.IConexion!.RolesPermissions!.Add(rolePermission);
-                this.IConexion.SaveChanges();
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        public bool RemoverPermisosRol(int roleId, int permissionId)
-        {
-            try
-            {
-                // Buscar la asignación de permiso existente
-                var rolePermission = this.IConexion!.RolesPermissions!
-                    .FirstOrDefault(rp => rp.RoleId == roleId && rp.PermissionId == permissionId);
-
-                if (rolePermission == null)
-                    return true; // No existe la asignación, consideramos que ya fue removida correctamente
-
-                // Eliminar la asignación
-                this.IConexion!.RolesPermissions!.Remove(rolePermission);
-                this.IConexion.SaveChanges();
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
         public List<Roles> Listar()
         {
-            return this.IConexion!.Roles!.Take(20).ToList();
+        
+            return this.IConexion!.Roles!.ToList();
+        }
+
+        /*public List<Users>? ObtenerUsuarios(Roles? entidad)
+        {
+            if (entidad == null || entidad.Id == 0)
+                throw new Exception("lbFaltaInformacion");
+
+            var usuarios = this.IConexion!.Users!
+                .Where(u => u.RoleId == entidad.Id)
+                .ToList();
+
+            return usuarios.Count > 0 ? usuarios : null;
+        }*/
+
+
+        public Roles? BuscarPorNombre(Roles? entidad)
+        {
+            if (entidad == null || string.IsNullOrEmpty(entidad.RoleName))
+                throw new Exception("lbFaltaInformacion");
+
+            return this.IConexion!.Roles!
+                .FirstOrDefault(r => r.RoleName!.Contains(entidad.RoleName!));
         }
     }
 }
