@@ -95,14 +95,14 @@ namespace lib_aplicaciones.Implementaciones
                 .ToList();
         }
 
-        public Users? ObtenerPorUserName(Users? entidad)
+        public Users? ObtenerPorUserName(string userName)
         {
-            if (entidad == null || string.IsNullOrEmpty(entidad.UserName))
+            if (string.IsNullOrEmpty(userName))
                 throw new Exception("lbFaltaInformacion");
 
             return this.IConexion!.Users!
                 .Include(u => u._Roles)
-                .FirstOrDefault(x => x.UserName == entidad.UserName);
+                .FirstOrDefault(x => x.UserName == userName);
         }
 
         public Users? ObtenerPorId(Users? entidad)

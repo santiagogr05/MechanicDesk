@@ -6,7 +6,7 @@ namespace lib_aplicaciones.Interfaces
     {
         void Configurar(string StringConexion);
         Users? CrearUsuario(Users? entidad);
-        Users? ObtenerPorUserName(Users? entidad);
+        Users? ObtenerPorUserName(string userName);
         Users? ObtenerPorId(Users? entidad);
         Users? Modificar(Users? entidad);
         Users? Borrar(Users? entidad);
