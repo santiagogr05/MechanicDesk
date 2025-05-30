@@ -471,12 +471,6 @@ CREATE TABLE [Permissions](
 	[Description] NVARCHAR(200)
 );
 
--- Tabla de Usuarios Roles
-CREATE TABLE [UsersRoles](
-	[Id] INT IDENTITY(1,1) PRIMARY KEY,
-	[UserId] INT REFERENCES [Users](Id),
-	[RoleId] INT REFERENCES [Roles](Id)
-);
 
 -- Tabla de Roles Permisos
 CREATE TABLE [RolesPermissions](
