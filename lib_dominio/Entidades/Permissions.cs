@@ -1,4 +1,6 @@
 ﻿
+using Newtonsoft.Json;
+
 namespace lib_dominio.Entidades
 {
     public class Permissions
@@ -6,6 +8,7 @@ namespace lib_dominio.Entidades
         public int Id { get; set; }
         public string? PermissionName { get; set; }
         public string? Description { get; set; }
+        [JsonIgnore]
         public List<RolesPermissions>? _RolesPermissions { get; set; }
     }
 }
