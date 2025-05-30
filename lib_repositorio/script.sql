@@ -476,20 +476,6 @@ CREATE TABLE [Roles](
 	[RoleName] NVARCHAR(100) UNIQUE NOT NULL,
 );
 
---Tabla de Permisos
-CREATE TABLE [Permissions](
-	[Id] INT IDENTITY(1,1) PRIMARY KEY,
-	[PermissionName] NVARCHAR(100) NOT NULL,
-	[Description] NVARCHAR(200)
-);
-
-
--- Tabla de Roles Permisos
-CREATE TABLE [RolesPermissions](
-	[Id] INT IDENTITY(1,1) PRIMARY KEY,
-	[RoleId] INT REFERENCES [Roles](Id),
-	[PermissionId] INT REFERENCES [Permissions](Id)
-);
 
 
 
