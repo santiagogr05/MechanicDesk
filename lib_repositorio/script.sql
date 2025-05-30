@@ -477,6 +477,16 @@ CREATE TABLE [Roles](
 );
 
 
+-- Insertar roles
+
+INSERT INTO [Roles] (RoleName)
+VALUES ('Admin')
+
+--Insertar Usuario
+INSERT INTO [Users] (UserName,PasswordHash,RoleId)
+VALUES ('sam404','lurvr8PbVspJhjoGaxOmo8gTnSi0nwg2c8IZu9gfKU4=',1)
+
+
 
 
 
