@@ -186,6 +186,16 @@ SELECT * FROM OrderServices
 
 GO
 
+CREATE TABLE Auditoria (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    Tabla NVARCHAR(100),
+    Operacion NVARCHAR(10), 
+    Fecha DATETIME DEFAULT GETDATE(),
+    Usuario NVARCHAR(100) DEFAULT SYSTEM_USER,
+    Datos NVARCHAR(MAX) 
+);
+GO
+
 -- ========= BRANDS =========
 CREATE TRIGGER trg_Brands_INSERT ON Brands AFTER INSERT AS
 BEGIN
@@ -455,8 +465,10 @@ GO
 CREATE TABLE [Users](
 	[Id] INT IDENTITY(1,1) PRIMARY KEY,
 	[UserName] NVARCHAR(50) UNIQUE NOT NULL,
-	[PasswordHash] NVARCHAR(50) UNIQUE NOT NULL
+	[PasswordHash] NVARCHAR(50) UNIQUE NOT NULL,
+	[RoleId] INT REFERENCES [Roles](Id)
 );
+
 
 --Tabla de Roles
 CREATE TABLE [Roles](
