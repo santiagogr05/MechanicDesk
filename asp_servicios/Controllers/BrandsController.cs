@@ -58,11 +58,7 @@ namespace asp_servicios.Controllers
             try
             {
                 var datos = ObtenerDatos();
-                if (!tokenController!.Validate(datos))
-                {
-                    respuesta["Error"] = "lbNoAutenticacion";
-                    return JsonConversor.ConvertirAString(respuesta);
-                }
+                
 
                 var entidad = JsonConversor.ConvertirAObjeto<Brands>(
                     JsonConversor.ConvertirAString(datos["Entidad"]));
@@ -89,18 +85,7 @@ namespace asp_servicios.Controllers
             try
             {
                 var datos = ObtenerDatos();
-                if (!tokenController!.Validate(datos))
-                {
-                    respuesta["Error"] = "lbNoAutenticacion";
-                    return JsonConversor.ConvertirAString(respuesta);
-                }
-
-                if(!tokenController.ValidateWithRole(datos, "Admin"))
-                {
-                    respuesta["Error"] = "lbNoAutorizacion";
-                    return JsonConversor.ConvertirAString(respuesta);
-                }
-
+                
                 var entidad = JsonConversor.ConvertirAObjeto<Brands>(
                     JsonConversor.ConvertirAString(datos["Entidad"]));
 
@@ -127,18 +112,7 @@ namespace asp_servicios.Controllers
             try
             {
                 var datos = ObtenerDatos();
-                if (!tokenController!.Validate(datos))
-                {
-                    respuesta["Error"] = "lbNoAutenticacion";
-                    return JsonConversor.ConvertirAString(respuesta);
-                }
-
-                if (!tokenController.ValidateWithRole(datos, "Admin"))
-                {
-                    respuesta["Error"] = "lbNoAutorizacion";
-                    return JsonConversor.ConvertirAString(respuesta);
-                }
-
+                
                 var entidad = JsonConversor.ConvertirAObjeto<Brands>(
                     JsonConversor.ConvertirAString(datos["Entidad"]));
 
@@ -165,18 +139,7 @@ namespace asp_servicios.Controllers
             try
             {
                 var datos = ObtenerDatos();
-                if (!tokenController!.Validate(datos))
-                {
-                    respuesta["Error"] = "lbNoAutenticacion";
-                    return JsonConversor.ConvertirAString(respuesta);
-                }
-
-                if (!tokenController.ValidateWithRole(datos, "Admin"))
-                {
-                    respuesta["Error"] = "lbNoAutorizacion";
-                    return JsonConversor.ConvertirAString(respuesta);
-                }
-
+                
                 var entidad = JsonConversor.ConvertirAObjeto<Brands>(
                     JsonConversor.ConvertirAString(datos["Entidad"]));
 
