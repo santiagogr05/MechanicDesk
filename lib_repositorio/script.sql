@@ -486,6 +486,13 @@ VALUES ('Admin')
 INSERT INTO [Users] (UserName,PasswordHash,RoleId)
 VALUES ('sam404','lurvr8PbVspJhjoGaxOmo8gTnSi0nwg2c8IZu9gfKU4=',1)
 
+INSERT INTO [Roles] (RoleName)
+VALUES ('Mecanico')
+
+INSERT INTO [Users] (UserName,PasswordHash,RoleId)
+VALUES ('santi404','oip8vInz06G3kByGah0oPaegWoTMP/w/pckOw9nGiGc=',2)
+
+
 
 
 
