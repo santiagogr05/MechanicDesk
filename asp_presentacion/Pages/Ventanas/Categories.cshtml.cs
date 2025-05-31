@@ -35,7 +35,7 @@ namespace asp_presentacion.Pages.Ventanas
         {
             try
             {
-                var variable_session = HttpContext.Session.GetString("Usuario");
+                var variable_session = HttpContext.Session.GetString("UserName");
                 if (String.IsNullOrEmpty(variable_session))
                 {
                     HttpContext.Response.Redirect("/");

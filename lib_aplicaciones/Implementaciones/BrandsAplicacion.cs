@@ -10,6 +10,7 @@ namespace lib_aplicaciones.Implementaciones
     {
         private IConexion? IConexion = null;
 
+
         public BrandsAplicacion(IConexion iConexion)
         {
             this.IConexion = iConexion;

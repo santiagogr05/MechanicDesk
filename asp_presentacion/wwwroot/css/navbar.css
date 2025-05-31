@@ -1,15 +1,100 @@
-﻿.container-navbar{
+﻿
+nav {
+    background-color: #767B7F;
 
+    width: 100%;
+    height: 5%;
+    border-radius:5px;
+}
+.nav{
+    display:flex;
+    flex-flow : row nowrap;
+
+    width:100%;
+    height: 100%;
+}
+    .nav > h2 {
+        display: flex;
+        width: 20%;
+        justify-content: center;
+        align-items: center;
+        font-size: 2.1rem;
+        padding: 0;
+        margin: 0;        
+        /*    background-color:mediumpurple;*/
+    }
+        .nav > h2 > a {
+            text-decoration: none;            
+            list-style: none;
+            color:black;
+        }
+
+        .container-navbar {
+            display: flex;
+            width: 80%;
+        }
+
+.container-navbar_list {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content:space-around;
+    width: 70%;
 }
 
-.container-navbar_list{
-
+.navbar-item {
+    display: flex;
+    align-items: center;
+    position: relative;
+    text-decoration: none;
+    padding: 10px;
+    list-style: none;
+    /*    background-color: #7d8082;*/
+    /*    margin-right: 10px;*/
+    transition: background-color 0.3s ease-in-out, color 1s ease-in-out;
+    border-radius:8px;
 }
+    .navbar-item:hover {
+        background-color: #919891;
+        opacity: 0.5;
+    }
 
-.navbar-item{
+    .navbar-item:last-child {
+        display:flex;
+        justify-self:flex-end;        
+        position:absolute;
+        text-decoration: none;
+        padding: 0px;        
+        list-style: none;
+        right: 2%;
+        top: 3%;
+        border:none;
+        color: transparent;   
+/*        width: 6%;
+        height:3.5%;*/
+/*        top:4%;*/
+    }
+        .navbar-item:last-child:hover{
+            background-color:none;
+        }
 
+        .navbar-item-anchor {
+            text-decoration: none;
+            color: black;
+            font-size: 1.31rem;
+        }
+
+.cerrar-sesion {
+    background-color: #919891;
+    height: 4vh;
+    width: 7vw;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.2rem;
+    color: black;
+    font-weight: bold;
 }
-
-.navbar-item-anchor{
-
+.cerrar-sesion:hover{
+    opacity: 1;
+    transform: scale(1.05);
+    cursor:pointer;
 }
