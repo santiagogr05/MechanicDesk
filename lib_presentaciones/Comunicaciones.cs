@@ -1,5 +1,5 @@
 ﻿using lib_dominio.Nucleo;
-using System.Text; // Asegúrate de tener este using
+using System.Text;
 
 namespace lib_presentaciones
 {

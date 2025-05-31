@@ -9,6 +9,7 @@
   <ItemGroup>
     <ProjectReference Include="..\lib_aplicaciones\lib_aplicaciones.csproj" />
     <ProjectReference Include="..\lib_dominio\lib_dominio.csproj" />
+    <ProjectReference Include="..\lib_presentaciones\lib_presentaciones.csproj" />
     <ProjectReference Include="..\lib_repositorio\lib_repositorio.csproj" />
   </ItemGroup>
 

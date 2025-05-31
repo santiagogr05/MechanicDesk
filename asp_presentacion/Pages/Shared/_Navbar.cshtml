@@ -1,12 +1,14 @@
-﻿@* @model asp_presentacion.Pages.Shared.NavbarModel *@
+﻿@* @model asp_presentacion.Pages.Shared.NavbarModel  *@
 
 @section Styles {
     <link rel="stylesheet" href="~/css/navbar.css?v=@DateTime.Now.Ticks" />
 }
-
-<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-    <div class="container">
-        <h2>Workshop</h2>
+<nav>
+    <div class="nav">
+        
+        <h2>
+            <a asp-area="" asp-page="/Vistas/Home">MechanicDesk</a>
+        </h2>
         
         <div class="container-navbar">
             <ul class="container-navbar_list">
@@ -26,7 +28,7 @@
                     <a class="navbar-item-anchor" asp-area="" asp-page="/Ventanas/Orders">Ordenes</a>
                 </li>
                 <li class="navbar-item">
-                    <a class="navbar-item_anchor" asp-area="" asp-page="/Ventanas/PaymentMethods">Metodos de Pago</a>
+                    <a class="navbar-item-anchor" asp-area="" asp-page="/Ventanas/PaymentMethods">Metodos de Pago</a>
                 </li>
                 <li class="navbar-item">
                     <a class="navbar-item-anchor" asp-area="" asp-page="/Ventanas/Products">Productos</a>
@@ -40,9 +42,9 @@
                 <li class="navbar-item">
                     <a class="navbar-item-anchor" asp-area="" asp-page="/Ventanas/Vehicles">Vehiculos</a>
                 </li>
-                <li class="navbar-list">
+                <li class="navbar-item">
                     <form method="post" asp-page-handler="BtClose" asp-page="/Index">
-                        <input type="submit" value="Cerrar sesión" class="btn btn-danger" />
+                        <input type="submit" value="Cerrar sesión" class="cerrar-sesion" />
                     </form>
                 </li>
             </ul>
