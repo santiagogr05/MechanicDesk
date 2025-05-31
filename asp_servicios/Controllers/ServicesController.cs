@@ -2,6 +2,7 @@
 using lib_aplicaciones.Interfaces;
 using lib_dominio.Entidades;
 using lib_dominio.Nucleo;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace asp_servicios.Controllers
@@ -35,12 +36,7 @@ namespace asp_servicios.Controllers
             try
             {
                 var datos = ObtenerDatos();
-                if (!tokenController!.Validate(datos))
-                {
-                    respuesta["Error"] = "lbNoAutenticacion";
-                    return JsonConversor.ConvertirAString(respuesta);
-                }
-
+                
                 this.iAplicacion!.Configurar(Configuracion.ObtenerValor("StringConexion")!);
                 respuesta["Entidades"] = this.iAplicacion!.Listar();
 
@@ -62,12 +58,7 @@ namespace asp_servicios.Controllers
             try
             {
                 var datos = ObtenerDatos();
-                if (!tokenController!.Validate(datos))
-                {
-                    respuesta["Error"] = "lbNoAutenticacion";
-                    return JsonConversor.ConvertirAString(respuesta);
-                }
-
+                
                 var entidad = JsonConversor.ConvertirAObjeto<Services>(
                     JsonConversor.ConvertirAString(datos["Entidad"]));
 
@@ -86,18 +77,14 @@ namespace asp_servicios.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public string Guardar()
         {
             var respuesta = new Dictionary<string, object>();
             try
             {
                 var datos = ObtenerDatos();
-                if (!tokenController!.Validate(datos))
-                {
-                    respuesta["Error"] = "lbNoAutenticacion";
-                    return JsonConversor.ConvertirAString(respuesta);
-                }
-
+            
                 var entidad = JsonConversor.ConvertirAObjeto<Services>(
                     JsonConversor.ConvertirAString(datos["Entidad"]));
 
@@ -117,18 +104,14 @@ namespace asp_servicios.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public string Modificar()
         {
             var respuesta = new Dictionary<string, object>();
             try
             {
                 var datos = ObtenerDatos();
-                if (!tokenController!.Validate(datos))
-                {
-                    respuesta["Error"] = "lbNoAutenticacion";
-                    return JsonConversor.ConvertirAString(respuesta);
-                }
-
+                
                 var entidad = JsonConversor.ConvertirAObjeto<Services>(
                     JsonConversor.ConvertirAString(datos["Entidad"]));
 
@@ -148,18 +131,14 @@ namespace asp_servicios.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public string Borrar()
         {
             var respuesta = new Dictionary<string, object>();
             try
             {
                 var datos = ObtenerDatos();
-                if (!tokenController!.Validate(datos))
-                {
-                    respuesta["Error"] = "lbNoAutenticacion";
-                    return JsonConversor.ConvertirAString(respuesta);
-                }
-
+                
                 var entidad = JsonConversor.ConvertirAObjeto<Services>(
                     JsonConversor.ConvertirAString(datos["Entidad"]));
 

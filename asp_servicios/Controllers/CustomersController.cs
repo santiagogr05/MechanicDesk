@@ -2,6 +2,7 @@ using asp_servicios.Nucleo;
 using lib_aplicaciones.Interfaces;
 using lib_dominio.Entidades;
 using lib_dominio.Nucleo;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace asp_servicios.Controllers
@@ -29,6 +30,7 @@ namespace asp_servicios.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public string Listar()
         {
             var respuesta = new Dictionary<string, object>();
@@ -56,6 +58,7 @@ namespace asp_servicios.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public string PorIdentificacion()
         {
             var respuesta = new Dictionary<string, object>();
@@ -86,6 +89,7 @@ namespace asp_servicios.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public string Guardar()
         {
             var respuesta = new Dictionary<string, object>();
@@ -117,6 +121,7 @@ namespace asp_servicios.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public string Modificar()
         {
             var respuesta = new Dictionary<string, object>();
@@ -148,6 +153,7 @@ namespace asp_servicios.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public string Borrar()
         {
             var respuesta = new Dictionary<string, object>();
