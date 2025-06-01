@@ -493,6 +493,12 @@ INSERT INTO [Users] (UserName,PasswordHash,RoleId)
 VALUES ('santi404','oip8vInz06G3kByGah0oPaegWoTMP/w/pckOw9nGiGc=',2)
 
 
+-- Prueba para auditoria
+SELECT * FROM [Auditoria]
+
+INSERT INTO Brands (BrandName,OriginCountry)
+VALUES ('Citroen','Francia')
+
 
 
 

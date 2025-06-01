@@ -30,6 +30,6 @@ namespace lib_repositorio.Implementaciones
         public DbSet<Users>? Users { get; set; }
         public DbSet<Roles>? Roles { get; set; }
      
-
+        public DbSet<Auditoria>? Auditoria { get; set; }
     }
 }
