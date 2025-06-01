@@ -8,6 +8,7 @@ namespace lib_aplicaciones.Interfaces
     {
         void Configurar(string StringConexion);
         List<Customers> PorIdentificacion(Customers? entidad);
+        List<Customers> PorNombre(Customers? entidad);
         List<Customers> Listar();
         Customers? Guardar(Customers? entidad);
         Customers? Modificar(Customers? entidad);

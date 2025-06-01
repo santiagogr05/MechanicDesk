@@ -37,12 +37,7 @@ namespace asp_servicios.Controllers
             try
             {
                 var datos = ObtenerDatos();
-                if (!tokenController!.Validate(datos))
-                {
-                    respuesta["Error"] = "lbNoAutenticacion";
-                    return JsonConversor.ConvertirAString(respuesta);
-                }
-
+                
                 this.iAplicacion!.Configurar(Configuracion.ObtenerValor("StringConexion")!);
                 respuesta["Entidades"] = this.iAplicacion!.Listar();
 
@@ -65,17 +60,38 @@ namespace asp_servicios.Controllers
             try
             {
                 var datos = ObtenerDatos();
-                if (!tokenController!.Validate(datos))
-                {
-                    respuesta["Error"] = "lbNoAutenticacion";
-                    return JsonConversor.ConvertirAString(respuesta);
-                }
-
+                
                 var entidad = JsonConversor.ConvertirAObjeto<Customers>(
                     JsonConversor.ConvertirAString(datos["Entidad"]));
 
                 this.iAplicacion!.Configurar(Configuracion.ObtenerValor("StringConexion")!);
                 respuesta["Entidades"] = this.iAplicacion!.PorIdentificacion(entidad);
+
+                respuesta["Respuesta"] = "OK";
+                respuesta["Fecha"] = DateTime.Now.ToString();
+                return JsonConversor.ConvertirAString(respuesta);
+            }
+            catch (Exception ex)
+            {
+                respuesta["Error"] = ex.Message.ToString();
+                return JsonConversor.ConvertirAString(respuesta);
+            }
+        }
+
+        [HttpPost]
+        [Authorize]
+        public string PorNombre()
+        {
+            var respuesta = new Dictionary<string, object>();
+            try
+            {
+                var datos = ObtenerDatos();
+                
+                var entidad = JsonConversor.ConvertirAObjeto<Customers>(
+                    JsonConversor.ConvertirAString(datos["Entidad"]));
+
+                this.iAplicacion!.Configurar(Configuracion.ObtenerValor("StringConexion")!);
+                respuesta["Entidades"] = this.iAplicacion!.PorNombre(entidad);
 
                 respuesta["Respuesta"] = "OK";
                 respuesta["Fecha"] = DateTime.Now.ToString();
@@ -96,12 +112,7 @@ namespace asp_servicios.Controllers
             try
             {
                 var datos = ObtenerDatos();
-                if (!tokenController!.Validate(datos))
-                {
-                    respuesta["Error"] = "lbNoAutenticacion";
-                    return JsonConversor.ConvertirAString(respuesta);
-                }
-
+                
                 var entidad = JsonConversor.ConvertirAObjeto<Customers>(
                     JsonConversor.ConvertirAString(datos["Entidad"]));
 
@@ -128,11 +139,6 @@ namespace asp_servicios.Controllers
             try
             {
                 var datos = ObtenerDatos();
-                if (!tokenController!.Validate(datos))
-                {
-                    respuesta["Error"] = "lbNoAutenticacion";
-                    return JsonConversor.ConvertirAString(respuesta);
-                }
 
                 var entidad = JsonConversor.ConvertirAObjeto<Customers>(
                     JsonConversor.ConvertirAString(datos["Entidad"]));
@@ -160,12 +166,7 @@ namespace asp_servicios.Controllers
             try
             {
                 var datos = ObtenerDatos();
-                if (!tokenController!.Validate(datos))
-                {
-                    respuesta["Error"] = "lbNoAutenticacion";
-                    return JsonConversor.ConvertirAString(respuesta);
-                }
-
+                
                 var entidad = JsonConversor.ConvertirAObjeto<Customers>(
                     JsonConversor.ConvertirAString(datos["Entidad"]));
 

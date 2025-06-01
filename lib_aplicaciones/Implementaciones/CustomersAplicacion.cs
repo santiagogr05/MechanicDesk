@@ -31,11 +31,11 @@ namespace lib_aplicaciones.Implementaciones
 
         public Customers? Guardar(Customers? entidad)
         {
-           if (entidad == null)
+            if (entidad == null)
                 throw new Exception("lbFaltaInformacion");
-          if (entidad.Id != 0)
+            if (entidad.Id != 0)
                 throw new Exception("lbYaSeGuardo");
-            
+
             this.IConexion!.Customers!.Add(entidad);
             this.IConexion.SaveChanges();
             return entidad;
@@ -52,7 +52,7 @@ namespace lib_aplicaciones.Implementaciones
                 throw new Exception("lbFaltaInformacion");
             if (entidad!.Id == 0)
                 throw new Exception("lbNoSeGuardo");
-            
+
             var entry = this.IConexion!.Entry<Customers>(entidad);
             entry.State = EntityState.Modified;
             this.IConexion.SaveChanges();
@@ -66,6 +66,13 @@ namespace lib_aplicaciones.Implementaciones
                 .Where(x => x.Identification!.Contains(entidad!.Identification!))
                 .ToList();
 
+        }
+
+        public List<Customers> PorNombre(Customers? entidad)
+        {
+            return this.IConexion!.Customers!
+                .Where(x => x.CustomerName!.Contains(entidad!.CustomerName!))
+                .ToList();
         }
     }
 }
