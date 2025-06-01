@@ -1,4 +1,48 @@
-﻿header{
-    margin:0;
-    padding:0;
+﻿.cards {
+    display : flex;
+    position : relative;
+/*    background-color :antiquewhite;*/
+    justify-content : center;
+    align-items : center;
+    width: 80vw;
+    height : 80vh;
+    margin-top : 20px;
+/*    top : 50%;*/
+    left : 10%;
+
+    flex-flow : row wrap;
+}
+
+.option-card {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 23%;
+    height: 50%;
+    background-color: #767B7F;
+    margin-left: 50px;
+    margin-top: 20px;
+    border-radius: 18px;
+    font-size: 28px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-weight : bold;
+}
+    .option-card:hover {
+        transform: scale(1.01);
+        cursor: pointer;
+        background-color: #919891;
+    }
+
+.option-card a {
+    display : flex;
+    flex-flow : column nowrap;
+    justify-content : space-between;
+    align-items : center;
+    height : 50%;
+/*    background-color : coral;*/
+
+}
+.option-card img {
+    width: 130px;
+    height: 130px;
 }
