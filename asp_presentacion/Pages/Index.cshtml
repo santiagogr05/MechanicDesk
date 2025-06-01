@@ -6,8 +6,9 @@
 }
 
 @{
-    ViewData["Title"] = "";
+    ViewData["Title"] = "Login";
 }
+
 @if (!Model.EstaLogueado)
 {
     <div class="container">
@@ -22,13 +23,13 @@
             <form method="POST">
                 <div class="container-usuario">
                     <input onchange="keyUp(this)"
-                            asp-for="@Model.Email"
+                           asp-for="@Model.UserName"
                             class="input-usuario" placeholder="Usuario" />
                 </div>
                 <div class="container-contrasenha">
                     <input type="password"
                             onchange="keyUp(this)"
-                            asp-for="@Model.Contrasena"
+                            asp-for="@Model.Password"
                             class="input-contrasenha" placeholder="Contraseña" />
                 </div>
 

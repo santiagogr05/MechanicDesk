@@ -186,6 +186,16 @@ SELECT * FROM OrderServices
 
 GO
 
+CREATE TABLE Auditoria (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    Tabla NVARCHAR(100),
+    Operacion NVARCHAR(10), 
+    Fecha DATETIME DEFAULT GETDATE(),
+    Usuario NVARCHAR(100) DEFAULT SYSTEM_USER,
+    Datos NVARCHAR(MAX) 
+);
+GO
+
 -- ========= BRANDS =========
 CREATE TRIGGER trg_Brands_INSERT ON Brands AFTER INSERT AS
 BEGIN
@@ -449,6 +459,52 @@ BEGIN
     SELECT 'ServicesProducts', 'DELETE', (SELECT * FROM DELETED FOR JSON AUTO);
 END;
 GO
+
+--Tabla de Usuarios
+
+CREATE TABLE [Users](
+	[Id] INT IDENTITY(1,1) PRIMARY KEY,
+	[UserName] NVARCHAR(50) UNIQUE NOT NULL,
+	[PasswordHash] NVARCHAR(50) UNIQUE NOT NULL,
+	[RoleId] INT REFERENCES [Roles](Id)
+);
+
+
+--Tabla de Roles
+CREATE TABLE [Roles](
+	[Id] INT IDENTITY(1,1) PRIMARY KEY,
+	[RoleName] NVARCHAR(100) UNIQUE NOT NULL,
+);
+
+
+-- Insertar roles
+
+INSERT INTO [Roles] (RoleName)
+VALUES ('Admin')
+
+--Insertar Usuario
+INSERT INTO [Users] (UserName,PasswordHash,RoleId)
+VALUES ('sam404','lurvr8PbVspJhjoGaxOmo8gTnSi0nwg2c8IZu9gfKU4=',1)
+
+INSERT INTO [Roles] (RoleName)
+VALUES ('Mecanico')
+
+INSERT INTO [Users] (UserName,PasswordHash,RoleId)
+VALUES ('santi404','oip8vInz06G3kByGah0oPaegWoTMP/w/pckOw9nGiGc=',2)
+
+
+-- Prueba para auditoria
+SELECT * FROM [Auditoria]
+
+INSERT INTO Brands (BrandName,OriginCountry)
+VALUES ('Citroen','Francia')
+
+
+
+
+
+
+
 
 
 

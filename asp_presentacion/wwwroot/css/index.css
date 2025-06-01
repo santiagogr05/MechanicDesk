@@ -24,15 +24,12 @@ h3 {
 
 
 .container-login {
-/*    background-color: coral;*/
     display:flex;
     flex-flow:column nowrap;
     justify-content:space-around;
     align-items:center;
     
     position: absolute;
-/*    top: -50px;
-    left:-115px;    */
     width: 80%;
     height: 70%;
     

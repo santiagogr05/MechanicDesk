@@ -1,16 +1,18 @@
 ﻿using lib_dominio.Nucleo;
+using System.Text;
 
 namespace lib_presentaciones
 {
     public class Comunicaciones
     {
-        private string? Protocolo = string.Empty,
-            Host = string.Empty,
-            Servicio = string.Empty,
-            token = null;
+        private string? Protocolo = "http://",
+            Host = "localhost:5161",
+            Servicio = ""; // Por defecto
+
+        private string? token = null;
 
         public Comunicaciones(string servicio = "",
-            string protocolo = "http://", 
+            string protocolo = "http://",
             string host = "localhost:5161")
         {
             Protocolo = protocolo;
@@ -18,6 +20,7 @@ namespace lib_presentaciones
             Servicio = servicio;
         }
 
+        // Este método 'ConstruirUrl' se mantiene igual, aunque no lo uses directamente para el login.
         public Dictionary<string, object> ConstruirUrl(Dictionary<string, object> data, string Metodo)
         {
             data["Url"] = Protocolo + Host + "/" + Servicio + Metodo;
@@ -25,41 +28,57 @@ namespace lib_presentaciones
             return data;
         }
 
+        // Este método 'Ejecutar' se mantiene igual, si lo usas para otras llamadas a la API *después* de la autenticación.
+        // Asume que la autenticación ya ha ocurrido y tienes un token.
         public async Task<Dictionary<string, object>> Ejecutar(Dictionary<string, object> datos)
         {
             var respuesta = new Dictionary<string, object>();
             try
             {
-                respuesta = await Autenticar(datos);
-                if (respuesta == null || respuesta.ContainsKey("Error"))
-                    return respuesta!;
-                respuesta.Clear();
+                // Aquí, idealmente, deberías asegurarte de que 'datos' contenga un método de API a llamar
+                // y que 'token' no sea nulo.
+                // Si el token es nulo, deberías considerar qué hacer (¿forzar autenticación de nuevo?).
 
-                var url = datos["Url"].ToString();
+                // Se asume que 'datos' ya contiene "Url" (para la llamada real) y "UrlToken" (ya usado).
+                // Y que 'token' ya fue obtenido por el método Autenticar.
+                if (token == null)
+                {
+                    respuesta.Add("Error", "No autenticado. El token es nulo.");
+                    return respuesta;
+                }
+
+                // El método 'Ejecutar' en tu código original remueve "Url" y "UrlToken"
+                // y luego no usa "Url" para la llamada PostAsync.
+                // Recomiendo que 'Ejecutar' reciba el endpoint al que llamar, no el diccionario con "Url".
+                // Por ejemplo: Ejecutar(Dictionary<string, object> datos, string apiEndpoint)
+                // Para mantenerlo con los mínimos cambios:
+                var url = datos["Url"].ToString(); // Asumo que el caller ya puso la URL completa aquí
                 datos.Remove("Url");
-                datos.Remove("UrlToken");
-                datos["Bearer"] = token!;
-                var stringData = JsonConversor.ConvertirAString(datos);
+                datos.Remove("UrlToken"); // Si existen
+                datos["Bearer"] = token!; // Añade el token para la llamada
 
-                var httpClient = new HttpClient();
+                using var httpClient = new HttpClient(); // Usando 'using'
                 httpClient.Timeout = new TimeSpan(0, 4, 0);
+                httpClient.DefaultRequestHeaders.Authorization =
+                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token); // Añade el header Bearer
 
-                var message = await httpClient.PostAsync(url, new StringContent(stringData));
+                var stringData = JsonConversor.ConvertirAString(datos);
+                var message = await httpClient.PostAsync(url, new StringContent(stringData, Encoding.UTF8, "application/json"));
 
                 if (!message.IsSuccessStatusCode)
                 {
-                    respuesta.Add("Error", "lbErrorComunicacion");
+                    var errorContent = await message.Content.ReadAsStringAsync(); // Leer más detalles
+                    respuesta.Add("Error", $"Error de comunicación: {message.ReasonPhrase}. Detalles: {errorContent}");
                     return respuesta;
                 }
 
                 var resp = await message.Content.ReadAsStringAsync();
-                httpClient.Dispose(); httpClient = null;
-
                 if (string.IsNullOrEmpty(resp))
                 {
-                    respuesta.Add("Error", "lbErrorAutenticacion");
+                    respuesta.Add("Error", "Respuesta vacía de la API.");
                     return respuesta;
                 }
+
                 resp = Replace(resp);
                 respuesta = JsonConversor.ConvertirAObjeto(resp);
                 return respuesta;
@@ -71,66 +90,104 @@ namespace lib_presentaciones
             }
         }
 
-        private async Task<Dictionary<string, object>> Autenticar(Dictionary<string, object> datos)
+        // Método de autenticación, con pequeñas mejoras para el manejo de errores de la API
+        public async Task<Dictionary<string, object>> Autenticar(Dictionary<string, object> datos)
         {
             var respuesta = new Dictionary<string, object>();
             try
             {
-                var url = datos["UrlToken"].ToString();
-                var temp = new Dictionary<string, object>();
-                temp["Usuario"] = DatosGenerales.usuario_datos;
-                var stringData = JsonConversor.ConvertirAString(temp);
+                // La URL del endpoint de autenticación ya está definida aquí
+                var url = Protocolo + Host + "/" + Servicio + "Token/Autenticar";
 
-                var httpClient = new HttpClient();
+                var credenciales = new Dictionary<string, object>
+                {
+                    ["UserName"] = datos["UserName"],
+                    ["Password"] = datos["Password"]
+                };
+                var stringData = JsonConversor.ConvertirAString(credenciales);
+
+                using var httpClient = new HttpClient(); // Usando 'using' para HttpClient
                 httpClient.Timeout = new TimeSpan(0, 1, 0);
-                var mensaje = await httpClient.PostAsync(url, new StringContent(stringData));
+                var mensaje = await httpClient.PostAsync(url, new StringContent(stringData, Encoding.UTF8, "application/json"));
 
                 if (!mensaje.IsSuccessStatusCode)
                 {
-                    respuesta.Add("Error", "lbErrorComunicacion");
+                    // Intenta leer el contenido del error de la respuesta de la API para un mensaje más útil
+                    var errorContent = await mensaje.Content.ReadAsStringAsync();
+                    try
+                    {
+                        // Si la API devuelve un JSON con el mensaje de error
+                        var apiError = JsonConversor.ConvertirAObjeto(Replace(errorContent));
+                        // Busca una clave que contenga el mensaje de error de tu API
+                        if (apiError.ContainsKey("mensaje") || apiError.ContainsKey("error_description"))
+                        {
+                            respuesta.Add("Error", apiError["mensaje"]?.ToString() ?? apiError["error_description"]?.ToString() ?? "Credenciales inválidas.");
+                        }
+                        else
+                        {
+                            respuesta.Add("Error", $"Error de autenticación: {mensaje.ReasonPhrase}. Por favor, verifica tus credenciales.");
+                        }
+                    }
+                    catch
+                    {
+                        // Si no es un JSON o no se pudo deserializar
+                        respuesta.Add("Error", $"Error de autenticación. Código: {mensaje.StatusCode}.");
+                    }
                     return respuesta;
                 }
 
                 var resp = await mensaje.Content.ReadAsStringAsync();
-                httpClient.Dispose(); httpClient = null;
                 if (string.IsNullOrEmpty(resp))
                 {
-                    respuesta.Add("Error", "lbErrorAutenticacion");
+                    respuesta.Add("Error", "Respuesta vacía del servicio de autenticación.");
                     return respuesta;
                 }
 
-                resp = Replace(resp);
+                resp = Replace(resp); // Sigue limpiando la respuesta si es necesario
                 respuesta = JsonConversor.ConvertirAObjeto(resp);
-                token = respuesta["Token"].ToString();
+
+                if (respuesta.ContainsKey("Token")) // Asegura que la respuesta contiene el token
+                {
+                    token = respuesta["Token"].ToString(); // Guarda el token en la instancia de Comunicaciones
+                }
+                else
+                {
+                    respuesta.Add("Error", "La respuesta de autenticación no contiene un token válido.");
+                }
+
                 return respuesta;
             }
             catch (Exception ex)
             {
-                respuesta["Error"] = ex.ToString();
+                respuesta["Error"] = $"Error interno al intentar autenticar: {ex.Message}";
+                // Nota: LogConversor.Log necesita un ViewData!, podrías pasarlo null o un diccionario vacío si esta clase no tiene acceso directo
+                // LogConversor.Log(ex, new Dictionary<string, object>());
                 return respuesta;
             }
         }
 
         private string Replace(string resp)
         {
+            // Este método se mantiene igual, aunque es el punto más frágil de tu diseño.
+            // Si tu API puede enviar JSON limpio, considera eliminar o simplificar esto.
             return resp.Replace("\\\\r\\\\n", "")
-                .Replace("\\r\\n", "")
-                .Replace("\\", "")
-                .Replace("\\\"", "\"")
-                .Replace("\"", "'")
-                .Replace("'[", "[")
-                .Replace("]'", "]")
-                .Replace("'{'", "{'")
-                .Replace("\\\\", "\\")
-                .Replace("'}'", "'}")
-                .Replace("}'", "}")
-                .Replace("\\n", "")
-                .Replace("\\r", "")
-                .Replace("    ", "")
-                .Replace("'{", "{")
-                .Replace("\"", "")
-                .Replace("  ", "")
-                .Replace("null", "''");
+                       .Replace("\\r\\n", "")
+                       .Replace("\\", "")
+                       .Replace("\\\"", "\"")
+                       .Replace("\"", "'")
+                       .Replace("'[", "[")
+                       .Replace("]'", "]")
+                       .Replace("'{'", "{'")
+                       .Replace("\\\\", "\\")
+                       .Replace("'}'", "'}")
+                       .Replace("}'", "}")
+                       .Replace("\\n", "")
+                       .Replace("\\r", "")
+                       .Replace("    ", "")
+                       .Replace("'{", "{")
+                       .Replace("\"", "")
+                       .Replace("  ", "")
+                       .Replace("null", "''");
         }
     }
 }

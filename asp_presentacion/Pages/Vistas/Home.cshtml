@@ -1,5 +1,10 @@
 ﻿@page
 @model asp_presentacion.Pages.Vistas.HomeModel
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/home.css?v=@DateTime.Now.Ticks" />
+}
+
 @{
 }
 
@@ -7,5 +12,41 @@
     <partial name="_Navbar" />
 </header>
 
+<div class="cards">
 
-<h1>Home funca</h1>
+    <div class="option-card">
+        <a>
+            <img src="~/images/sheet.png" />
+            Crear Orden
+        </a>
+    </div>
+
+    <div class="option-card">
+        <a>
+            <img src="~/images/driver-guide-chair-car.png" />
+            Personas / Vehiculos
+        </a>
+    </div>
+
+    <div class="option-card">
+        <a>
+            <img src="~/images/processing-time.png" />
+            Procesos
+        </a>
+    </div>
+
+    <div class="option-card">
+        <a>
+            <img src="~/images/gear.png" />
+            Acciones
+        </a>
+    </div>
+
+    <div class="option-card">
+        <a>
+            <img src="~/images/pdf.png" />
+            Reportes
+        </a>
+    </div>
+</div>
+
