@@ -30,6 +30,7 @@ namespace asp_servicios.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public string Listar()
         {
             var respuesta = new Dictionary<string, object>();
@@ -52,6 +53,7 @@ namespace asp_servicios.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public string PorReferencia()
         {
             var respuesta = new Dictionary<string, object>();
