@@ -12,7 +12,13 @@
 </header>
 
 <section class="list-container">
-    <h2>Lista de Clientes</h2>
+    <h2>Clientes y Vehículos</h2>
+
+    <form method="get">
+        <input type="text" name="filtro" value="@Model.Filtro" placeholder="Buscar por nombre o placa..." />
+        <button type="submit" name="tipo" value="clientes">Clientes</button>
+        <button type="submit" name="tipo" value="vehiculos">Vehículos</button>
+    </form>
 
     @if (!Model.ModelState.IsValid)
     {
@@ -24,31 +30,63 @@
         </div>
     }
 
-    @if (Model.ListaClientes != null && Model.ListaClientes.Any())
+    @if (Model.Tipo == "clientes")
     {
-        <table class="clientes-table">
-            <thead>
-                <tr>
-                    <th>Nombre</th>
-                    <th>Correo</th>
-                    <th>Teléfono</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var cliente in Model.ListaClientes)
-                {
+        @if (Model.ListaClientes?.Any() == true)
+        {
+            <table class="clientes-table">
+                <thead>
                     <tr>
-                        <td>@cliente.CustomerName</td>
-                        <td>@cliente.Email</td>
-                        <td>@cliente.PhoneNumber</td>
+                        <th>Nombre</th>
+                        <th>Correo</th>
+                        <th>Teléfono</th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (var cliente in Model.ListaClientes)
+                    {
+                        <tr>
+                            <td>@cliente.CustomerName</td>
+                            <td>@cliente.Email</td>
+                            <td>@cliente.PhoneNumber</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p>No hay clientes registrados.</p>
+        }
     }
-    else
+    else if (Model.Tipo == "vehiculos")
     {
-        <p>No hay clientes registrados.</p>
+        @if (Model.ListaVehiculos?.Any() == true)
+        {
+            <table class="vehiculos-table">
+                <thead>
+                    <tr>
+                        <th>Placa</th>
+                        <th>Marca</th>
+                        <th>Modelo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var vehiculo in Model.ListaVehiculos)
+                    {
+                        <tr>
+                            <td>@vehiculo.Plate</td>
+                            <td>@vehiculo.Engine</td>
+                            <td>@vehiculo.Color</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p>No hay vehículos registrados.</p>
+        }
     }
 </section>
 

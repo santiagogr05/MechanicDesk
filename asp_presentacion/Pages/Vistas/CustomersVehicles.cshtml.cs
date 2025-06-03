@@ -13,6 +13,11 @@ namespace asp_presentacion.Pages.Vistas
         private readonly Comunicaciones _comunicaciones;
 
         public List<Customers> ListaClientes { get; set; } = new();
+        public List<Vehicles> ListaVehiculos { get; set; } = new();
+        [BindProperty(SupportsGet = true)]
+        public string Filtro { get; set; } = "";
+        [BindProperty(SupportsGet = true)]
+        public string Tipo { get; set; } = "clientes";
 
         public CustomersVehiclesModel(Comunicaciones comunicaciones)
         {
@@ -21,31 +26,51 @@ namespace asp_presentacion.Pages.Vistas
 
         public async Task<IActionResult> OnGetAsync()
         {
-            // Preparar los datos necesarios
-            var datos = new Dictionary<string, object>();
-
-            // Construir la URL para el endpoint (asumiendo que es "Clientes/Listar")
-            datos = _comunicaciones.ConstruirUrl(datos, "Customers/Listar");
-
-            // Ejecutar la llamada a la API
-            var respuesta = await _comunicaciones.Ejecutar(datos);
-
-            if (respuesta.ContainsKey("Error"))
+            if (Tipo == "vehiculos")
             {
-                // Maneja el error según tu lógica (podrías redirigir, mostrar un mensaje, etc.)
-                ModelState.AddModelError(string.Empty, respuesta["Error"].ToString()!);
+                var datos = _comunicaciones.ConstruirUrl(new(), "Vehicles/Listar");
+                var respuesta = await _comunicaciones.Ejecutar(datos);
+
+                if (respuesta.ContainsKey("Error"))
+                {
+                    ModelState.AddModelError(string.Empty, respuesta["Error"].ToString()!);
+                    return Page();
+                }
+
+                if (respuesta.ContainsKey("Entidades"))
+                {
+                    ListaVehiculos = JsonConversor.ConvertirAObjeto<List<Vehicles>>(respuesta["Entidades"].ToString() ?? "[]");
+                    if (!string.IsNullOrWhiteSpace(Filtro))
+                    {
+                        ListaVehiculos = ListaVehiculos
+                             .Where(v => v.Plate?.ToLower().Contains(Filtro.ToLower()) == true)
+                             .ToList();
+                    }
+                }
                 return Page();
             }
-
-
-            if (respuesta.ContainsKey("Entidades"))
+            else
             {
-                var lista = respuesta["Entidades"];
-                ListaClientes = JsonConversor.ConvertirAObjeto<List<Customers>>(lista?.ToString() ?? "[]");
+                var datos = _comunicaciones.ConstruirUrl(new(), "Customers/Listar");
+                var respuesta = await _comunicaciones.Ejecutar(datos);
+                if (respuesta.ContainsKey("Error"))
+                {
+                    ModelState.AddModelError(string.Empty, respuesta["Error"].ToString()!);
+                    return Page();
+                }
+                if (respuesta.ContainsKey("Entidades"))
+                {
+                    ListaClientes = JsonConversor.ConvertirAObjeto<List<Customers>>(respuesta["Entidades"].ToString() ?? "[]");
+                    if (!string.IsNullOrWhiteSpace(Filtro))
+                    {
+                        ListaClientes = ListaClientes
+                             .Where(c => c.CustomerName?.ToLower().Contains(Filtro.ToLower()) == true)
+                             .ToList();
+                    }
+                }
+
+                return Page();
             }
-
-
-            return Page();
         }
     }
 }
