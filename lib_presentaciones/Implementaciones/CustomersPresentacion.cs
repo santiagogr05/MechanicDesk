@@ -6,16 +6,21 @@ namespace lib_presentaciones.Implementaciones
 {
     public class CustomersPresentacion : ICustomersPresentacion
     {
-        private Comunicaciones? comunicaciones = null;
+        private Comunicaciones? _comunicaciones;
+
+        public CustomersPresentacion(Comunicaciones? comunicaciones)
+        {
+            _comunicaciones = comunicaciones;
+        }
 
         public async Task<List<Customers>> Listar()
         {
             var lista = new List<Customers>();
             var datos = new Dictionary<string, object>();
 
-            comunicaciones = new Comunicaciones();
-            datos = comunicaciones.ConstruirUrl(datos, "Customers/Listar");
-            var respuesta = await comunicaciones!.Ejecutar(datos);
+            
+            datos = _comunicaciones!.ConstruirUrl(datos, "Customers/Listar");
+            var respuesta = await _comunicaciones!.Ejecutar(datos);
 
             if (respuesta.ContainsKey("Error"))
             {
@@ -32,9 +37,8 @@ namespace lib_presentaciones.Implementaciones
             var datos = new Dictionary<string, object>();
             datos["Entidad"] = entidad!;
 
-            comunicaciones = new Comunicaciones();
-            datos = comunicaciones.ConstruirUrl(datos, "Customers/PorIdentificacion");
-            var respuesta = await comunicaciones!.Ejecutar(datos);
+            datos = _comunicaciones!.ConstruirUrl(datos, "Customers/PorIdentificacion");
+            var respuesta = await _comunicaciones!.Ejecutar(datos);
 
             if (respuesta.ContainsKey("Error"))
             {
@@ -43,6 +47,21 @@ namespace lib_presentaciones.Implementaciones
             lista = JsonConversor.ConvertirAObjeto<List<Customers>>(
                 JsonConversor.ConvertirAString(respuesta["Entidades"]));
             return lista;
+        }
+
+        public async Task<List<Customers>> PorNombre(Customers? entidad)
+        {
+            var datos = new Dictionary<string, object>() { ["Entidad"] = entidad! };
+            datos = _comunicaciones!.ConstruirUrl(datos, "Customers/PorNombre");
+            var respuesta = await _comunicaciones!.Ejecutar(datos);
+
+            if (respuesta.ContainsKey("Error"))
+            {
+                throw new Exception(respuesta["Error"].ToString()!);
+            }
+
+            return JsonConversor.ConvertirAObjeto<List<Customers>>(
+                JsonConversor.ConvertirAString(respuesta["Entidades"]));     
         }
 
         public async Task<Customers?> Guardar(Customers? entidad)
@@ -55,9 +74,8 @@ namespace lib_presentaciones.Implementaciones
             var datos = new Dictionary<string, object>();
             datos["Entidad"] = entidad;
 
-            comunicaciones = new Comunicaciones();
-            datos = comunicaciones.ConstruirUrl(datos, "Customers/Guardar");
-            var respuesta = await comunicaciones!.Ejecutar(datos);
+            datos = _comunicaciones!.ConstruirUrl(datos, "Customers/Guardar");
+            var respuesta = await _comunicaciones!.Ejecutar(datos);
 
             if (respuesta.ContainsKey("Error"))
             {
@@ -78,9 +96,8 @@ namespace lib_presentaciones.Implementaciones
             var datos = new Dictionary<string, object>();
             datos["Entidad"] = entidad;
 
-            comunicaciones = new Comunicaciones();
-            datos = comunicaciones.ConstruirUrl(datos, "Customers/Modificar");
-            var respuesta = await comunicaciones!.Ejecutar(datos);
+            datos = _comunicaciones!.ConstruirUrl(datos, "Customers/Modificar");
+            var respuesta = await _comunicaciones!.Ejecutar(datos);
 
             if (respuesta.ContainsKey("Error"))
             {
@@ -101,9 +118,8 @@ namespace lib_presentaciones.Implementaciones
             var datos = new Dictionary<string, object>();
             datos["Entidad"] = entidad;
 
-            comunicaciones = new Comunicaciones();
-            datos = comunicaciones.ConstruirUrl(datos, "Customers/Borrar");
-            var respuesta = await comunicaciones!.Ejecutar(datos);
+            datos = _comunicaciones!.ConstruirUrl(datos, "Customers/Borrar");
+            var respuesta = await _comunicaciones!.Ejecutar(datos);
 
             if (respuesta.ContainsKey("Error"))
             {
