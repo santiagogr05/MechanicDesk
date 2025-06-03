@@ -1,0 +1,54 @@
+﻿@page
+@model asp_presentacion.Pages.Vistas.CustomersVehiclesModel
+@section Styles {
+    <link rel="stylesheet" href="~/css/customersVehicles.css?v=@DateTime.Now.Ticks" />
+}
+@{
+
+}
+
+<header>
+    <partial name="_Navbar" />
+</header>
+
+<section class="list-container">
+    <h2>Lista de Clientes</h2>
+
+    @if (!Model.ModelState.IsValid)
+    {
+        <div class="error">
+            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <p>@error.ErrorMessage</p>
+            }
+        </div>
+    }
+
+    @if (Model.ListaClientes != null && Model.ListaClientes.Any())
+    {
+        <table class="clientes-table">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Correo</th>
+                    <th>Teléfono</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var cliente in Model.ListaClientes)
+                {
+                    <tr>
+                        <td>@cliente.CustomerName</td>
+                        <td>@cliente.Email</td>
+                        <td>@cliente.PhoneNumber</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No hay clientes registrados.</p>
+    }
+</section>
+
