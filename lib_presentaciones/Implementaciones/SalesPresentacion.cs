@@ -6,16 +6,20 @@ namespace lib_presentaciones.Implementaciones
 {
     public class SalesPresentacion : ISalesPresentacion
     {
-        private Comunicaciones? comunicaciones = null;
+        private Comunicaciones? _comunicaciones;
+
+        public SalesPresentacion(Comunicaciones? comunicaciones)
+        {
+            _comunicaciones = comunicaciones;
+        }
 
         public async Task<List<Sales>> Listar()
         {
             var lista = new List<Sales>();
             var datos = new Dictionary<string, object>();
 
-            comunicaciones = new Comunicaciones();
-            datos = comunicaciones.ConstruirUrl(datos, "Sales/Listar");
-            var respuesta = await comunicaciones!.Ejecutar(datos);
+            datos = _comunicaciones!.ConstruirUrl(datos, "Sales/Listar");
+            var respuesta = await _comunicaciones!.Ejecutar(datos);
 
             if (respuesta.ContainsKey("Error"))
             {
@@ -32,9 +36,8 @@ namespace lib_presentaciones.Implementaciones
             var datos = new Dictionary<string, object>();
             datos["Entidad"] = entidad!;
 
-            comunicaciones = new Comunicaciones();
-            datos = comunicaciones.ConstruirUrl(datos, "Sales/PorReferencia");
-            var respuesta = await comunicaciones!.Ejecutar(datos);
+            datos = _comunicaciones!.ConstruirUrl(datos, "Sales/PorReferencia");
+            var respuesta = await _comunicaciones!.Ejecutar(datos);
 
             if (respuesta.ContainsKey("Error"))
             {
@@ -55,9 +58,8 @@ namespace lib_presentaciones.Implementaciones
             var datos = new Dictionary<string, object>();
             datos["Entidad"] = entidad;
 
-            comunicaciones = new Comunicaciones();
-            datos = comunicaciones.ConstruirUrl(datos, "Sales/Guardar");
-            var respuesta = await comunicaciones!.Ejecutar(datos);
+            datos = _comunicaciones!.ConstruirUrl(datos, "Sales/Guardar");
+            var respuesta = await _comunicaciones!.Ejecutar(datos);
 
             if (respuesta.ContainsKey("Error"))
             {
@@ -78,9 +80,8 @@ namespace lib_presentaciones.Implementaciones
             var datos = new Dictionary<string, object>();
             datos["Entidad"] = entidad;
 
-            comunicaciones = new Comunicaciones();
-            datos = comunicaciones.ConstruirUrl(datos, "Sales/Modificar");
-            var respuesta = await comunicaciones!.Ejecutar(datos);
+            datos = _comunicaciones!.ConstruirUrl(datos, "Sales/Modificar");
+            var respuesta = await _comunicaciones!.Ejecutar(datos);
 
             if (respuesta.ContainsKey("Error"))
             {
@@ -101,9 +102,8 @@ namespace lib_presentaciones.Implementaciones
             var datos = new Dictionary<string, object>();
             datos["Entidad"] = entidad;
 
-            comunicaciones = new Comunicaciones();
-            datos = comunicaciones.ConstruirUrl(datos, "Sales/Borrar");
-            var respuesta = await comunicaciones!.Ejecutar(datos);
+            datos = _comunicaciones!.ConstruirUrl(datos, "Sales/Borrar");
+            var respuesta = await _comunicaciones!.Ejecutar(datos);
 
             if (respuesta.ContainsKey("Error"))
             {

@@ -1,0 +1,86 @@
+﻿@page
+@model asp_presentacion.Pages.Vistas.CustomersVehiclesModel
+@section Styles {
+    <link rel="stylesheet" href="~/css/customersVehicles.css?v=@DateTime.Now.Ticks" />
+}
+@{
+
+}
+
+<header>
+    <partial name="_Navbar" />
+</header>
+
+<section class="list-container">
+    <h2>Clientes y Vehículos</h2>
+
+    <form method="get">
+        <input type="text" name="filtro" value="@Model.Filtro" placeholder="Buscar por nombre o placa..." />
+        <button type="submit" name="tipo" value="clientes">Clientes</button>
+        <button type="submit" name="tipo" value="vehiculos">Vehículos</button>
+    </form>
+
+    @if (Model.Tipo == "clientes")
+    {
+        @if (Model.ListaClientes?.Any() == true)
+        {
+            <table class="clientes-table">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Correo</th>
+                        <th>Teléfono</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var cliente in Model.ListaClientes)
+                    {
+                        <tr>
+                            <td>@cliente.CustomerName</td>
+                            <td>@cliente.Email</td>
+                            <td>@cliente.PhoneNumber</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p>No hay clientes registrados.</p>
+        }
+    }
+    else if (Model.Tipo == "vehiculos")
+    {
+        @if (Model.ListaVehiculos?.Any() == true)
+        {
+            <table class="vehiculos-table">
+                <thead>
+                    <tr>
+                        <th>Placa</th>
+                        <th>Motor</th>
+                        <th>Color</th>
+                        <th>Marca</th>
+                        <th>Propietario</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var vehiculo in Model.ListaVehiculos)
+                    {
+                        <tr>
+                            <td>@vehiculo.Plate</td>
+                            <td>@vehiculo.Engine</td>
+                            <td>@vehiculo.Color</td>
+                            <td>@vehiculo._Brand!.BrandName</td>
+                            <td>@vehiculo._Customer!.CustomerName</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p>No hay vehículos registrados.</p>
+        }
+    }
+</section>
+

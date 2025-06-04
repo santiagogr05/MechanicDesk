@@ -25,7 +25,7 @@ namespace asp_presentacion
                 options.IdleTimeout = TimeSpan.FromMinutes(30);
             });
 
-
+            services.AddHttpContextAccessor(); // Necesario para acceder a HttpContext en Razor Pages
             // Presentaciones (tus clases de lib_presentaciones.Implementaciones)
             // Asegúrate de que lib_presentaciones.Comunicaciones esté registrado ANTES que las clases que la usan (como BrandsPresentacion)
             services.AddScoped<Comunicaciones>(); // ¡Esta es la línea clave que faltaba o estaba en el lugar equivocado!
@@ -58,7 +58,9 @@ namespace asp_presentacion
             if (!app.Environment.IsDevelopment())
             {
                 app.UseExceptionHandler("/Error");
+                app.UseHsts();
             }
+            app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseRouting();
 

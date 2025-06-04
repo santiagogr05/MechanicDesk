@@ -1,23 +1,34 @@
 ﻿using lib_dominio.Nucleo;
+using Microsoft.AspNetCore.Http;
+using System.Net.Http.Headers;
 using System.Text;
 
 namespace lib_presentaciones
 {
     public class Comunicaciones
     {
+        private readonly IHttpContextAccessor _contextAccessor;
         private string? Protocolo = "http://",
             Host = "localhost:5161",
             Servicio = ""; // Por defecto
 
         private string? token = null;
 
-        public Comunicaciones(string servicio = "",
+        public Comunicaciones(IHttpContextAccessor contextAccessor,string servicio = "",
             string protocolo = "http://",
             string host = "localhost:5161")
         {
+            _contextAccessor = contextAccessor;
             Protocolo = protocolo;
             Host = host;
             Servicio = servicio;
+            token = _contextAccessor.HttpContext?.Session.GetString("_AuthToken");
+        }
+
+        private void GuardarToken(string? nuevoToken)
+        {
+            token = nuevoToken;
+            _contextAccessor.HttpContext?.Session.SetString("_AuthToken", token!);
         }
 
         // Este método 'ConstruirUrl' se mantiene igual, aunque no lo uses directamente para el login.
@@ -32,6 +43,13 @@ namespace lib_presentaciones
         // Asume que la autenticación ya ha ocurrido y tienes un token.
         public async Task<Dictionary<string, object>> Ejecutar(Dictionary<string, object> datos)
         {
+            string token = _contextAccessor.HttpContext?.Session.GetString("_AuthToken") ?? "";
+
+            var request = new HttpRequestMessage(HttpMethod.Post, datos["Url"].ToString());
+
+            if (!string.IsNullOrEmpty(token)){
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            }
             var respuesta = new Dictionary<string, object>();
             try
             {
@@ -94,6 +112,7 @@ namespace lib_presentaciones
         public async Task<Dictionary<string, object>> Autenticar(Dictionary<string, object> datos)
         {
             var respuesta = new Dictionary<string, object>();
+            
             try
             {
                 // La URL del endpoint de autenticación ya está definida aquí
@@ -155,7 +174,17 @@ namespace lib_presentaciones
                     respuesta.Add("Error", "La respuesta de autenticación no contiene un token válido.");
                 }
 
-                return respuesta;
+                if (respuesta.ContainsKey("Token"))
+                {
+                    var token = respuesta["Token"].ToString();
+                    _contextAccessor.HttpContext?.Session.SetString("_AuthToken", token!);
+                }
+                else
+                {
+                    respuesta["Error"] = "No se recibió un token de autenticación válido.";
+                }
+
+                    return respuesta;
             }
             catch (Exception ex)
             {
