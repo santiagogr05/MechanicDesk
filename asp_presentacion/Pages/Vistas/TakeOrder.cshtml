@@ -1,0 +1,119 @@
+﻿@page
+@model asp_presentacion.Pages.Vistas.TakeOrderModel
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/takeOrder.css?v=@DateTime.Now.Ticks" />
+}
+
+@{
+}
+
+<header>
+    <partial name="_Navbar" />
+</header>
+
+<div class="take-order-container">
+    <form method="post" asp-page-handler="SelectCustomer">
+        <div class="search-bar">
+            <input type="text" id="customerSearchInput"
+                   asp-for="SelectedCustomerName"
+                   placeholder="Buscar cliente por nombre..."
+                   list="customerNamesDatalist" />
+            <button type="submit">Seleccionar Cliente</button>
+        </div>
+
+        <datalist id="customerNamesDatalist">
+        </datalist>
+    </form>
+
+    <div id="serverFeedback" class="customer-results">
+        @if (!string.IsNullOrEmpty(Model.FeedbackMessage))
+        {
+            <p>@Model.FeedbackMessage</p>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const customerSearchInput = document.getElementById('customerSearchInput');
+            const customerNamesDatalist = document.getElementById('customerNamesDatalist');
+            const serverFeedbackContainer = document.getElementById('serverFeedback');
+
+            let searchTimeout; // Usado para "debounce" las búsquedas
+
+            // Escuchar el evento 'input' en el campo de búsqueda (cada vez que el valor cambia)
+            customerSearchInput.addEventListener('input', function () {
+                clearTimeout(searchTimeout); // Limpiar cualquier temporizador anterior
+
+                const searchTerm = customerSearchInput.value.trim();
+
+                // Opcional: Establecer un mínimo de caracteres para iniciar la búsqueda
+                if (searchTerm.length < 2) {
+                    customerNamesDatalist.innerHTML = ''; // Limpiar opciones si el término es muy corto
+                    return;
+                }
+
+                // Esperar un breve tiempo antes de enviar la solicitud para evitar spamming
+                searchTimeout = setTimeout(async () => {
+                    await fetchCustomerSuggestions(searchTerm);
+                }, 300); // 300ms de retraso
+            });
+
+            async function fetchCustomerSuggestions(searchTerm) {
+                // Limpiamos las opciones existentes en el datalist
+                customerNamesDatalist.innerHTML = '';
+                // Puedes mostrar un mensaje temporal en el feedback del cliente si deseas
+                // serverFeedbackContainer.innerHTML = '<p>Buscando sugerencias...</p>';
+
+                try {
+                    // Asegúrate de obtener el token JWT de tu almacenamiento local
+                    const token = localStorage.getItem('token');
+                    if (!token) {
+                        serverFeedbackContainer.innerHTML = '<p>No se encontró token de autenticación. Por favor, inicie sesión.</p>';
+                        return;
+                    }
+
+                    // Construimos la URL para llamar al nuevo handler OnGetCustomersSuggestions del PageModel
+                    // encodeURIComponent es importante para manejar espacios y caracteres especiales
+                    const response = await fetch(`/Vistas/TakeOrder?handler=CustomersSuggestions&searchTerm=${encodeURIComponent(searchTerm)}`, {
+                        method: 'GET', // Es una petición GET para obtener datos
+                        headers: {
+                            'Authorization': 'Bearer ' + token // Enviamos el token de autorización
+                        }
+                    });
+
+                    // Parseamos la respuesta JSON
+                    const data = await response.json();
+
+                    if (response.ok) { // Si la respuesta HTTP es exitosa (código 2xx)
+                        if (data && data.length > 0) {
+                            // Por cada cliente en la respuesta, creamos una opción en el datalist
+                            data.forEach(customer => {
+                                const option = document.createElement('option');
+                                option.value = customer.nombre; // El nombre del cliente es el valor de la opción
+                                // Puedes añadir un atributo de datos con el ID si necesitas el ID
+                                // para alguna lógica posterior en JavaScript al seleccionar.
+                                // option.dataset.id = customer.id;
+                                customerNamesDatalist.appendChild(option);
+                            });
+                            // serverFeedbackContainer.innerHTML = ''; // Limpiar mensaje de búsqueda exitosa
+                        } else {
+                            // Si no se encontraron sugerencias
+                            // serverFeedbackContainer.innerHTML = '<p>No se encontraron sugerencias de clientes.</p>';
+                        }
+                    } else {
+                        // Si hubo un error en la respuesta HTTP (ej. 500 Internal Server Error)
+                        serverFeedbackContainer.innerHTML = `<p>Error al obtener sugerencias: ${data.message || data.error || 'Error desconocido'}</p>`;
+                        console.error('API Error:', data);
+                    }
+                } catch (error) {
+                    // Si hay un error en la red o en el procesamiento del fetch
+                    console.error('Error fetching customer suggestions:', error);
+                    serverFeedbackContainer.innerHTML = `<p>Ocurrió un error al procesar la solicitud de sugerencias: ${error.message}</p>`;
+                }
+            }
+        });
+    </script>
+}
