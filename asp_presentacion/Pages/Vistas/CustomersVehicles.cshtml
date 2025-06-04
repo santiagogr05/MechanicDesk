@@ -20,16 +20,6 @@
         <button type="submit" name="tipo" value="vehiculos">Vehículos</button>
     </form>
 
-    @if (!Model.ModelState.IsValid)
-    {
-        <div class="error">
-            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
-            {
-                <p>@error.ErrorMessage</p>
-            }
-        </div>
-    }
-
     @if (Model.Tipo == "clientes")
     {
         @if (Model.ListaClientes?.Any() == true)
@@ -67,8 +57,10 @@
                 <thead>
                     <tr>
                         <th>Placa</th>
+                        <th>Motor</th>
+                        <th>Color</th>
                         <th>Marca</th>
-                        <th>Modelo</th>
+                        <th>Propietario</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -78,6 +70,8 @@
                             <td>@vehiculo.Plate</td>
                             <td>@vehiculo.Engine</td>
                             <td>@vehiculo.Color</td>
+                            <td>@vehiculo._Brand!.BrandName</td>
+                            <td>@vehiculo._Customer!.CustomerName</td>
                         </tr>
                     }
                 </tbody>
