@@ -48,6 +48,25 @@ namespace lib_presentaciones.Implementaciones
             return lista;
         }
 
+        public async Task<List<Employees>> PorNombre(Employees? entidad)
+        {
+            var lista = new List<Employees>();
+            var datos = new Dictionary<string, object>();
+            datos["Entidad"] = entidad!;
+
+            datos = _comunicaciones!.ConstruirUrl(datos, "Employees/PorNombre");
+
+            var respuesta = await _comunicaciones!.Ejecutar(datos);
+
+            if (respuesta.ContainsKey("Error"))
+            {
+                throw new Exception(respuesta["Error"].ToString()!);
+            }
+            lista = JsonConversor.ConvertirAObjeto<List<Employees>>(
+                JsonConversor.ConvertirAString(respuesta["Entidades"]));
+            return lista;
+        }
+
         public async Task<Employees?> Guardar(Employees? entidad)
         {
             if (entidad!.Id != 0)

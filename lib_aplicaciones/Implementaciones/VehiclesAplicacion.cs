@@ -68,6 +68,7 @@ namespace lib_aplicaciones.Implementaciones
         {
             return this.IConexion!.Vehicles!
                 .Where(x => x.Plate!.Contains(entidad!.Plate!))
+                .Include(x => x._Customer)
                 .ToList();
 
         }

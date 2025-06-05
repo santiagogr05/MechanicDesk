@@ -4,12 +4,14 @@ using lib_presentaciones.Interfaces;
 
 namespace lib_presentaciones.Implementaciones
 {
+
     public class CustomersPresentacion : ICustomersPresentacion
     {
         private Comunicaciones? _comunicaciones;
 
         public CustomersPresentacion(Comunicaciones? comunicaciones)
         {
+            this._comunicaciones = comunicaciones;
             _comunicaciones = comunicaciones;
         }
 
@@ -18,7 +20,6 @@ namespace lib_presentaciones.Implementaciones
             var lista = new List<Customers>();
             var datos = new Dictionary<string, object>();
 
-            
             datos = _comunicaciones!.ConstruirUrl(datos, "Customers/Listar");
             var respuesta = await _comunicaciones!.Ejecutar(datos);
 
@@ -36,7 +37,7 @@ namespace lib_presentaciones.Implementaciones
             var lista = new List<Customers>();
             var datos = new Dictionary<string, object>();
             datos["Entidad"] = entidad!;
-
+            
             datos = _comunicaciones!.ConstruirUrl(datos, "Customers/PorIdentificacion");
             var respuesta = await _comunicaciones!.Ejecutar(datos);
 
@@ -51,17 +52,21 @@ namespace lib_presentaciones.Implementaciones
 
         public async Task<List<Customers>> PorNombre(Customers? entidad)
         {
-            var datos = new Dictionary<string, object>() { ["Entidad"] = entidad! };
-            datos = _comunicaciones!.ConstruirUrl(datos, "Customers/PorNombre");
+            var lista = new List<Customers>();
+            var datos = new Dictionary<string, object>();
+            datos["Entidad"] = entidad!;
+            
+            datos = _comunicaciones!.ConstruirUrl(datos, "Customers/PorNombre");            
+
             var respuesta = await _comunicaciones!.Ejecutar(datos);
 
             if (respuesta.ContainsKey("Error"))
             {
                 throw new Exception(respuesta["Error"].ToString()!);
             }
-
-            return JsonConversor.ConvertirAObjeto<List<Customers>>(
-                JsonConversor.ConvertirAString(respuesta["Entidades"]));     
+            lista = JsonConversor.ConvertirAObjeto<List<Customers>>(
+                JsonConversor.ConvertirAString(respuesta["Entidades"]));
+            return lista;
         }
 
         public async Task<Customers?> Guardar(Customers? entidad)
@@ -128,6 +133,7 @@ namespace lib_presentaciones.Implementaciones
             entidad = JsonConversor.ConvertirAObjeto<Customers>(
                 JsonConversor.ConvertirAString(respuesta["Entidad"]));
             return entidad;
-        }
+        }     
+        
     }
 }

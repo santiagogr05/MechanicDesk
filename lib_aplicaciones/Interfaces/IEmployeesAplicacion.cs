@@ -6,6 +6,7 @@ namespace lib_aplicaciones.Interfaces
     {
         void Configurar(string StringConexion);
         List<Employees> PorIdentificacion(Employees? entidad);
+        List<Employees> PorNombre(Employees? entidad);
         List<Employees> Listar();
         Employees? Guardar(Employees? entidad);
         Employees? Modificar(Employees? entidad);

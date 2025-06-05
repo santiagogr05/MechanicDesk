@@ -1,0 +1,399 @@
+﻿@page
+@model asp_presentacion.Pages.Vistas.TakeOrderModel
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/takeOrder.css?v=@DateTime.Now.Ticks" />
+}
+
+<header>
+    <partial name="_Navbar" />
+</header>
+
+<div class="take-order-container">
+    <div class="take-order-customer" style="display:none">
+        @* ELIMINAMOS el tag <form> aquí y cambiamos el botón a type="button" *@
+        <div class="search-bar">
+            <input type="text" id="customerSearchInput"
+                   asp-for="SelectedCustomerName"
+                   placeholder="Buscar cliente por nombre..."
+                   list="customerNamesDatalist" />
+            <button type="button" id="selectCustomerBtn">Seleccionar Cliente</button>
+        </div>
+
+        <datalist id="customerNamesDatalist">
+            @foreach (var name in Model.CustomerNames)
+            {
+                <option value="@name"></option>
+            }
+        </datalist>
+
+        <div id="customerFeedback" class="customer-results">
+            @* Cambié el ID para evitar duplicación *@
+            @* FeedbackMessage ahora se mostrará aquí o en un span específico si lo manejas solo con JS *@
+            @* @if (!string.IsNullOrEmpty(Model.FeedbackMessage))
+            {
+                <p>@Model.FeedbackMessage</p>
+            } *@
+            <p id="customerResultMessage"></p> @* Para mensajes específicos del cliente *@
+
+            @* Contenedores para mostrar el cliente seleccionado *@
+            @* Ya no usamos @if para mostrar u ocultar, JS los manipulará con CSS display none/block *@
+            <div class="customer-info-display" style="display: none;">
+                                
+                <div class="info-item">
+                    <span id="displayCustomerName"></span>
+                </div>
+                <div class="info-item">
+                    <span id="displayCustomerId"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="take-order-vehicle">
+        @* ELIMINAMOS el tag <form> aquí y cambiamos el botón a type="button" *@
+        <div class="search-bar">
+            <input type="text" id="vehicleSearchInput"
+                   asp-for="SelectedVehiclePlate"
+                   placeholder="Buscar vehiculo por placa..."
+                   list="vehiclePlatesDatalist" />
+            <button type="button" id="selectVehicleBtn">Seleccionar Vehiculo</button>
+        </div>
+
+        <datalist id="vehiclePlatesDatalist">
+            @foreach (var plate in Model.VehiclePlates)
+            {
+                <option value="@plate"></option>
+            }
+        </datalist>
+
+        <div id="vehicleFeedback" class="vehicle-results">
+            @* Cambié el ID para evitar duplicación *@
+            <p id="vehicleResultMessage"></p> @* Para mensajes específicos del vehículo *@
+
+            @* Contenedores para mostrar el Vehiculo seleccionado *@
+            <div class="vehicle-info-display">
+                
+                <div class="info-item">
+                    <span id="displayVehiclePlate"></span>
+                </div>
+                <div class="info-item">
+                    <span id="displayVehicleChassis"></span>
+                </div>
+                <div class="info-item">
+                    <span id="displayVehicleOwner"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="order-details">
+        @* Crear cliente
+        -CustomerName
+        -Identification
+        -PhoneNumber
+        -Email
+
+        Crear ORden
+        -OrderRef
+        -CustomerRemark
+        -ServiceCenterRemark
+        -VehicleId
+        -EmployeeId
+        *@
+
+        <div class="order-ref">
+            <input type="text" placeholder="Referencia de la Orden" />
+        </div>
+
+        <div class="service-center-remark">
+            <input type="text" placeholder="Anotacion centro de servicio" />
+        </div>
+
+        <div class="take-order-employee">        
+        <div class="search-bar">
+            <input type="text" id="employeeSearchInput"
+                   asp-for="SelectedEmployeeName"
+                   placeholder="Buscar mecanico por nombre..."
+                   list="employeeNamesDatalist" />
+            <button type="button" id="selectEmployeeBtn">Seleccionar Mecanico</button>
+        </div>
+
+            <datalist id="employeeNamesDatalist">
+            @foreach (var name in Model.EmployeesNames)
+            {
+                <option value="@name"></option>
+            }
+        </datalist>
+
+            <div id="employeeFeedback" class="employee-results">
+            @* Cambié el ID para evitar duplicación *@
+            @* FeedbackMessage ahora se mostrará aquí o en un span específico si lo manejas solo con JS *@
+            @* @if (!string.IsNullOrEmpty(Model.FeedbackMessage))
+            {
+                <p>@Model.FeedbackMessage</p>
+            } *@
+                <p id="employeeResultMessage"></p> @* Para mensajes específicos del cliente *@
+
+            @* Contenedores para mostrar el cliente seleccionado *@
+            @* Ya no usamos @if para mostrar u ocultar, JS los manipulará con CSS display none/block *@
+                <div class="employee-info-display">
+                                
+                <div class="info-item">
+                        <span id="displayEmployeeName"></span>
+                </div>
+                <div class="info-item">
+                        <span id="displayEmployeeId"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <input id="customerPhone" type="text" placeholder="Telefono del cliente"/>
+
+    <button id="createOrderBtn">
+        Crear Orden
+    </button>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Elementos del Cliente
+            const customerSearchInput = document.getElementById('customerSearchInput');
+            const customerNamesDatalist = document.getElementById('customerNamesDatalist');
+            const selectCustomerBtn = document.getElementById('selectCustomerBtn');
+            const displayCustomerNameSpan = document.getElementById('displayCustomerName');
+            const displayCustomerIdSpan = document.getElementById('displayCustomerId');
+            const customerInfoDisplay = document.querySelector('.customer-info-display');
+            const customerResultMessage = document.getElementById('customerResultMessage');
+
+            // Elementos del Mecanico
+            const employeeSearchInput = document.getElementById('employeeSearchInput');
+            const employeeNamesDatalist = document.getElementById('employeeNamesDatalist');
+            const selectEmployeeBtn = document.getElementById('selectEmployeeBtn');
+            const displayemployeeNameSpan = document.getElementById('displayEmployeeName');
+            const displayEmployeeIdSpan = document.getElementById('displayEmployeeId');
+            const employeeInfoDisplay = document.querySelector('.employee-info-display');
+            const employeeResultMessage = document.getElementById('employeeResultMessage');
+
+            // Elementos del Vehículo
+            const vehicleSearchInput = document.getElementById('vehicleSearchInput');
+            const vehiclePlatesDatalist = document.getElementById('vehiclePlatesDatalist');
+            const selectVehicleBtn = document.getElementById('selectVehicleBtn');
+            const displayVehiclePlateSpan = document.getElementById('displayVehiclePlate');
+            const displayVehicleChassisSpan = document.getElementById('displayVehicleChassis');
+            const displayVehicleOwnerSpan = document.getElementById('displayVehicleOwner');
+            const vehicleInfoDisplay = document.querySelector('.vehicle-info-display');
+            const vehicleResultMessage = document.getElementById('vehicleResultMessage');
+
+            // btn para mensaje
+            const CustomerPhone = document.getElementById('customerPhone');
+            const CreateOrderBtn = document.getElementById('createOrderBtn');
+
+
+
+
+            // --- Funciones de Utilidad para AJAX ---
+            async function postData(url = '', data = {}) {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value // Para protección CSRF
+                    },
+                    body: JSON.stringify(data)
+                });
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            }
+
+            // --- Lógica para Cliente ---
+
+            // Autocompletado del datalist para Cliente
+            let customerSearchTimeout = null;
+            customerSearchInput.addEventListener('input', function () {
+                clearTimeout(customerSearchTimeout);
+                const searchTerm = this.value;
+
+                if (searchTerm.length >= 2) {
+                    customerSearchTimeout = setTimeout(function () {
+                        fetch(`?handler=SearchCustomers&term=${encodeURIComponent(searchTerm)}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                customerNamesDatalist.innerHTML = '';
+                                data.forEach(name => {
+                                    const option = document.createElement('option');
+                                    option.value = name;
+                                    customerNamesDatalist.appendChild(option);
+                                });
+                            })
+                            .catch(error => console.error('Error fetching customer names:', error));
+                    }, 300);
+                }
+            });
+
+            // Selección de Cliente con AJAX
+            selectCustomerBtn.addEventListener('click', async function () {
+                const customerName = customerSearchInput.value;
+                customerResultMessage.textContent = ''; // Limpiar mensaje previo
+                customerInfoDisplay.style.display = 'none'; // Ocultar info previa
+
+                if (!customerName) {
+                    customerResultMessage.textContent = 'Por favor, ingresa un nombre de cliente.';
+                    return;
+                }
+
+                try {
+                    const data = await postData(`?handler=SelectCustomerAjax`, customerName);
+
+                    if (data.success) {
+                        displayCustomerNameSpan.textContent = data.customerName;
+                        displayCustomerIdSpan.textContent = data.customerId;
+                        customerInfoDisplay.style.display = 'block'; // Mostrar la info
+                        customerSearchInput.value = ''; // Limpiar el input
+                        customerResultMessage.textContent = data.message;
+                    } else {
+                        customerResultMessage.textContent = data.message;
+                        displayCustomerNameSpan.textContent = '';
+                        displayCustomerIdSpan.textContent = '';
+                        customerInfoDisplay.style.display = 'none';
+                    }
+                } catch (error) {
+                    console.error('Error al seleccionar cliente:', error);
+                    customerResultMessage.textContent = 'Ocurrió un error al seleccionar el cliente.';
+                    displayCustomerNameSpan.textContent = '';
+                    displayCustomerIdSpan.textContent = '';
+                    customerInfoDisplay.style.display = 'none';
+                }
+            });
+
+            // Autocompletado del datalist para Mecanico
+            let employeeSearchTimeout = null;
+            employeeSearchInput.addEventListener('input', function () {
+                clearTimeout(employeeSearchTimeout);
+                const searchTerm = this.value;
+
+                if (searchTerm.length >= 2) {
+                    customerSearchTimeout = setTimeout(function () {
+                        fetch(`?handler=SearchEmployeess&term=${encodeURIComponent(searchTerm)}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                employeeNamesDatalist.innerHTML = '';
+                                data.forEach(name => {
+                                    const option = document.createElement('option');
+                                    option.value = name;
+                                    employeeNamesDatalist.appendChild(option);
+                                });
+                            })
+                            .catch(error => console.error('Error fetching customer names:', error));
+                    }, 300);
+                }
+            });
+
+            // Selección de mecanico con AJAX
+            selectEmployeeBtn.addEventListener('click', async function () {
+                const employeeName = employeeSearchInput.value;
+                employeeResultMessage.textContent = ''; // Limpiar mensaje previo
+                employeeInfoDisplay.style.display = 'none'; // Ocultar info previa
+
+                if (!employeeName) {
+                    employeeResultMessage.textContent = 'Por favor, ingresa un nombre de mecanico.';
+                    return;
+                }
+
+                try {
+                    const data = await postData(`?handler=SelectEmployeeAjax`, employeeName);
+
+                    if (data.success) {
+                        displayEmployeeNameSpan.textContent = data.employeeName;
+                        displayEmployeeIdSpan.textContent = data.employeeId;
+                        employeeInfoDisplay.style.display = 'block'; // Mostrar la info
+                        employeeSearchInput.value = ''; // Limpiar el input
+                        employeeResultMessage.textContent = data.message;
+                    } else {
+                        employeeResultMessage.textContent = data.message;
+                        displayEmployeeNameSpan.textContent = '';
+                        displayEmployeeIdSpan.textContent = '';
+                        employeeInfoDisplay.style.display = 'none';
+                    }
+                } catch (error) {
+                    console.error('Error al seleccionar cliente:', error);
+                    customerResultMessage.textContent = 'Ocurrió un error al seleccionar el cliente.';
+                    displayCustomerNameSpan.textContent = '';
+                    displayCustomerIdSpan.textContent = '';
+                    customerInfoDisplay.style.display = 'none';
+                }
+            });
+            // --- Lógica para Vehículo ---
+
+            // Autocompletado del datalist para Vehículo
+            let vehicleSearchTimeout = null;
+            vehicleSearchInput.addEventListener('input', function () {
+                clearTimeout(vehicleSearchTimeout);
+                const searchTerm = this.value;
+
+                if (searchTerm.length >= 2) {
+                    vehicleSearchTimeout = setTimeout(function () {
+                        fetch(`?handler=SearchVehicles&term=${encodeURIComponent(searchTerm)}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                vehiclePlatesDatalist.innerHTML = '';
+                                data.forEach(plate => {
+                                    const option = document.createElement('option');
+                                    option.value = plate;
+                                    vehiclePlatesDatalist.appendChild(option);
+                                });
+                            })
+                            .catch(error => console.error('Error fetching vehicle plates:', error));
+                    }, 300);
+                }
+            });
+
+            // Selección de Vehículo con AJAX
+            selectVehicleBtn.addEventListener('click', async function () {
+                const vehiclePlate = vehicleSearchInput.value;
+                vehicleResultMessage.textContent = ''; // Limpiar mensaje previo
+                vehicleInfoDisplay.style.display = 'none'; // Ocultar info previa
+
+                if (!vehiclePlate) {
+                    vehicleResultMessage.textContent = 'Por favor, ingresa una placa de vehículo.';
+                    return;
+                }
+
+                try {
+                    const data = await postData(`?handler=SelectVehicleAjax`, vehiclePlate);
+
+                    if (data.success) {
+                        displayVehiclePlateSpan.textContent = data.vehiclePlate;
+                        displayVehicleChassisSpan.textContent = data.vehicleChassis;
+                        displayVehicleOwnerSpan.textContent = data.vehicleOwner;
+                        vehicleInfoDisplay.style.display = 'block'; // Mostrar la info
+                        vehicleSearchInput.value = ''; // Limpiar el input
+                        vehicleResultMessage.textContent = data.message;
+                    } else {
+                        vehicleResultMessage.textContent = data.message;
+                        displayVehiclePlateSpan.textContent = '';
+                        displayVehicleChassisSpan.textContent = '';
+                        displayVehicleOwnerSpan.textContent = '';
+                        vehicleInfoDisplay.style.display = 'none';
+                    }
+                } catch (error) {
+                    console.error('Error al seleccionar vehículo:', error);
+                    vehicleResultMessage.textContent = 'Ocurrió un error al seleccionar el vehículo.';
+                    displayVehiclePlateSpan.textContent = '';
+                    displayVehicleChassisSpan.textContent = '';
+                    displayVehicleOwnerSpan.textContent = '';
+                    vehicleInfoDisplay.style.display = 'none';
+                }
+            });
+        });
+    </script>
+
+   
+}
