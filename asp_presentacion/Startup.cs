@@ -41,14 +41,12 @@ namespace asp_presentacion
             services.AddScoped<IServicesPresentacion, ServicesPresentacion>();
             services.AddScoped<IServicesProductsPresentacion, ServicesProductsPresentacion>();
             services.AddScoped<IVehiclesPresentacion, VehiclesPresentacion>();
-            // Es preferible usar services.AddScoped si no hay una razón para builder.Services
-            services.AddScoped<IOrdersPresentacion, OrdersPresentacion>();
-            services.AddScoped<IAuditoriaPresentacion, AuditoriaPresentacion>();// Cambiado de builder.Services.AddScoped
 
-            // --- No necesitas AddControllers ni AddEndpointsApiExplorer aquí ---
-            // Estos son para aplicaciones API. Tu aplicación de presentación usa Razor Pages.
-            // services.AddControllers();
-            // services.AddEndpointsApiExplorer();
+            services.AddScoped<IOrdersPresentacion, OrdersPresentacion>();
+            services.AddScoped<IAuditoriaPresentacion, AuditoriaPresentacion>();
+            services.AddScoped<IUsersPresentacion, UsersPresentacion>();// 
+
+          
 
             services.AddRazorPages();
 
