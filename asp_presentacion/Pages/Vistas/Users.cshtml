@@ -1,0 +1,76 @@
+﻿@page
+@model asp_presentacion.Pages.Vistas.UsersModel
+@section Styles {
+    <link rel="stylesheet" href="~/css/users.css?v=@DateTime.Now.Ticks" />
+}
+@{
+}
+
+<header>
+    <partial name="_Navbar" />
+</header>
+
+<section class="list-container">
+    <h2>Usuarios</h2>
+    @if (Model.ListaUsuarios.Any() == true)
+    {
+        <table class="users-table">
+            <thead>
+                <tr>
+                    <th>Usuario</th>
+                    <th>Rol</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var registro in Model.ListaUsuarios)
+                {
+                    <tr>
+                        <td>@registro.UserName</td>
+                        <td>@registro._Roles!.RoleName</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No hay registro de Usuario</p>
+    }
+</section>
+<section class="add-user-form">
+    <h3>Añadir Nuevo Usuario</h3>
+    <form method="post" asp-page-handler="AddUser">
+        @* Anti-forgery token, importante para la seguridad en POST *@
+        @Html.AntiForgeryToken()
+
+        <div class="form-group">
+            <label asp-for="NewUser.UserName"></label>
+            <input asp-for="NewUser.UserName" class="form-control" />
+            <span asp-validation-for="NewUser.UserName" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="NewUser.PasswordHash"></label>
+            <input asp-for="NewUser.PasswordHash" type="password" class="form-control" />
+            <span asp-validation-for="NewUser.PasswordHash" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="NewUser.RoleId">Rol</label>
+            @if (Model.RolesList != null)
+            {
+                <select asp-for="NewUser.RoleId" asp-items="Model.RolesList" class="form-control">
+                    <option value="">Seleccione un Rol</option>
+                </select>
+            }
+            else
+            {
+                <p class="text-danger">No hay roles disponibles para seleccionar.</p>
+            }
+            <span asp-validation-for="NewUser.RoleId" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn-submit">Guardar Usuario</button>
+    </form>
+</section>
+

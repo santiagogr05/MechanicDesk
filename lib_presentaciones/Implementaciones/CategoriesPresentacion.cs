@@ -81,7 +81,7 @@ namespace lib_presentaciones.Implementaciones
             var datos = new Dictionary<string, object>();
             datos["Entidad"] = entidad;
 
-            datos = _comunicaciones.ConstruirUrl(datos, "Categories/Modificar");
+            datos = _comunicaciones!.ConstruirUrl(datos, "Categories/Modificar");
             var respuesta = await _comunicaciones!.Ejecutar(datos);
 
             if (respuesta.ContainsKey("Error"))

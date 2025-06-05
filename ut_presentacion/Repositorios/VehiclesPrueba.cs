@@ -44,7 +44,7 @@ namespace ut_presentacion.Repositorios
         {
             var brand = iConexion!.Brands!.FirstOrDefault(x => x.Id == 6);
             var customer = iConexion!.Customers!.FirstOrDefault(x => x.Id == 5);
-            this.entidad = EntidadesNucleo.Vehicles(brand,customer)!;
+            this.entidad = EntidadesNucleo.Vehicles(brand!,customer!)!;
             this.iConexion!.Vehicles!.Add(this.entidad);
             this.iConexion!.SaveChanges();
             return true;

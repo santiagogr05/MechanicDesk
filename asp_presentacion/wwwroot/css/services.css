@@ -1,0 +1,136 @@
+﻿
+body {
+    background-color: #B9CDB1;
+    color: #e0e0e0;
+}
+
+.list-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    background-color: #767B7F;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+}
+
+    .list-container > h2 {
+        color: black;
+        margin-bottom: 1.5rem;
+        text-align: center;
+        font-size: 1.8rem;
+    }
+
+.services-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+    background: #23272b;
+}
+
+
+    .services-table th {
+        background-color: #444a54;
+        color: #fff;
+        text-align: left;
+        padding: 12px 15px;
+    }
+
+    .services-table td {
+        padding: 10px 15px;
+        border-bottom: 1px solid #888c94;
+        color: #e0e0e0;
+    }
+
+
+    .services-table tr:nth-child(even) {
+        background-color: #2c2f34;
+    }
+
+    .services-table tr:hover {
+        background-color: #393e46;
+    }
+
+
+
+.list-container > p {
+    text-align: center;
+    color: #888c94;
+    padding: 2rem;
+    background-color: #23272b;
+    border-radius: 4px;
+}
+
+.add-service-form {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    background-color: #767B7F;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+}
+
+add-service-form > h3 {
+    color: black;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-size: 1.2rem;
+}
+
+add-service-form .form-group {
+    width: 80%;
+    margin-bottom: 1.25rem;
+}
+
+.add-service-form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #444;
+    font-weight: 500;
+}
+
+.add-service-form .form-control {
+    width: 100%;
+    padding: 0.6rem 1rem;
+    border: 1px solid #eaeaea;
+    border-radius: 4px;
+    background: #fafafa;
+    font-size: 1rem;
+    transition: border-color 0.2s;
+}
+
+    .add-service-form .form-control:focus {
+        border-color: #0078d7;
+        outline: none;
+        background: #fff;
+    }
+
+.add-service-form .btn-submit {
+    background: #B9CDB1;
+    color: black;
+    border: none;
+    padding: 0.7rem 1.5rem;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+    .add-service-form .btn-submit:hover {
+        background: #005fa3;
+    }
+
+.add-service-form .text-danger {
+    color: #d32f2f;
+    font-size: 0.95rem;
+    margin-top: 0.25rem;
+    display: block;
+}
+
+@media (max-width: 768px) {
+    .auditoria-table {
+        display: block;
+        overflow-x: auto;
+    }
+}
