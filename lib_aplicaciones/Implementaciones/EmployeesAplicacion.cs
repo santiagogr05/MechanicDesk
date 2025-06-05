@@ -68,5 +68,12 @@ namespace lib_aplicaciones.Implementaciones
                 .ToList();
 
         }
+
+        public List<Employees> PorNombre(Employees? entidad)
+        {
+            return this.IConexion!.Employees!
+                .Where(x => x.EmployeeName!.Contains(entidad!.EmployeeName!))
+                .ToList();
+        }
     }
 }

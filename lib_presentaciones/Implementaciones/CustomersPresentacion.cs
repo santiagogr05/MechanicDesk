@@ -12,6 +12,7 @@ namespace lib_presentaciones.Implementaciones
         public CustomersPresentacion(Comunicaciones? comunicaciones)
         {
             this._comunicaciones = comunicaciones;
+            _comunicaciones = comunicaciones;
         }
 
         public async Task<List<Customers>> Listar()
@@ -54,9 +55,9 @@ namespace lib_presentaciones.Implementaciones
             var lista = new List<Customers>();
             var datos = new Dictionary<string, object>();
             datos["Entidad"] = entidad!;
-
             
-            datos = _comunicaciones!.ConstruirUrl(datos, "Customers/PorNombre");
+            datos = _comunicaciones!.ConstruirUrl(datos, "Customers/PorNombre");            
+
             var respuesta = await _comunicaciones!.Ejecutar(datos);
 
             if (respuesta.ContainsKey("Error"))
@@ -77,7 +78,7 @@ namespace lib_presentaciones.Implementaciones
 
             var datos = new Dictionary<string, object>();
             datos["Entidad"] = entidad;
-            
+
             datos = _comunicaciones!.ConstruirUrl(datos, "Customers/Guardar");
             var respuesta = await _comunicaciones!.Ejecutar(datos);
 
@@ -99,7 +100,7 @@ namespace lib_presentaciones.Implementaciones
 
             var datos = new Dictionary<string, object>();
             datos["Entidad"] = entidad;
-           
+
             datos = _comunicaciones!.ConstruirUrl(datos, "Customers/Modificar");
             var respuesta = await _comunicaciones!.Ejecutar(datos);
 
@@ -121,7 +122,7 @@ namespace lib_presentaciones.Implementaciones
 
             var datos = new Dictionary<string, object>();
             datos["Entidad"] = entidad;
-            
+
             datos = _comunicaciones!.ConstruirUrl(datos, "Customers/Borrar");
             var respuesta = await _comunicaciones!.Ejecutar(datos);
 
@@ -132,6 +133,7 @@ namespace lib_presentaciones.Implementaciones
             entidad = JsonConversor.ConvertirAObjeto<Customers>(
                 JsonConversor.ConvertirAString(respuesta["Entidad"]));
             return entidad;
-        }
+        }     
+        
     }
 }

@@ -1,131 +1,116 @@
 using lib_dominio.Nucleo;
-using lib_presentaciones;
+using lib_presentaciones; // Necesario para la clase Comunicaciones
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Http; // Necesario para HttpContext.Session
 
 namespace asp_presentacion.Pages
 {
     public class IndexModel : PageModel
     {
-        // Esta es una propiedad pública ahora, para un mejor uso en ASP.NET Core
-        public bool EstaLogueado { get; set; } = false; // Inicializa en false
+        public bool EstaLogueado { get; set; } = false;
 
-        // La instancia de Comunicaciones se mantiene
-        Comunicaciones com = new Comunicaciones();
+        // Se inyecta la clase Comunicaciones a través del constructor
+        private readonly Comunicaciones _comunicaciones;
 
         [BindProperty] public string? UserName { get; set; }
         [BindProperty] public string? Password { get; set; }
 
-        // Nueva propiedad para mostrar mensajes de error al usuario
-        public string? ErrorMessage { get; set; }
+        // Para mostrar mensajes de error o éxito en la vista
+        [TempData] // TempData es útil para mensajes que persisten tras una redirección
+        public string? Message { get; set; }
 
-        public void OnGet()
+        // Constructor para la inyección de dependencias
+        public IndexModel(Comunicaciones comunicaciones)
+        {
+            _comunicaciones = comunicaciones; // Asigna la instancia inyectada
+        }
+
+        public IActionResult OnGet()
         {
             // Verifica si el usuario ya está logueado en la sesión
-            var variable_session = HttpContext.Session.GetString("UserName");
-            if (!String.IsNullOrEmpty(variable_session))
+            var userNameEnSesion = HttpContext.Session.GetString("UserName");
+            // También podrías verificar el token directamente si lo guardas con una clave conocida
+            // var tokenEnSesion = HttpContext.Session.GetString("_AuthToken");
+
+            if (!String.IsNullOrEmpty(userNameEnSesion))
             {
-                // Si hay un UserName en sesión, se considera logueado
                 EstaLogueado = true;
-                // Opcional: podrías redirigir directamente si ya está logueado y no quieres mostrar el formulario
-                // return RedirectToPage("Vistas/Home");
+                // Si ya está logueado, podrías redirigirlo directamente a la página principal
+                // return RedirectToPage("/Vistas/Home");
             }
+            // Si no está logueado, simplemente muestra la página de login (comportamiento por defecto)
+            return Page();
         }
 
+        // Este handler no parece usarse en tu .cshtml, pero si lo necesitas, aquí está.
         public void OnPostBtClean()
         {
-            try
-            {
-                // Limpia los campos de usuario y contraseña
-                UserName = string.Empty;
-                Password = string.Empty;
-                // No limpies ErrorMessage aquí si quieres que persista después de un intento fallido
-            }
-            catch (Exception ex)
-            {
-                LogConversor.Log(ex, ViewData!);
-            }
+            UserName = string.Empty;
+            Password = string.Empty;
+            // Message = string.Empty; // Limpiar mensajes si es necesario
         }
 
-        public async Task<IActionResult> OnPostBtEnter() // Hazlo async para poder usar await
+        public async Task<IActionResult> OnPostBtEnter()
         {
             try
             {
-                // 1. Validaciones básicas en el servidor
                 if (string.IsNullOrEmpty(UserName) || string.IsNullOrEmpty(Password))
                 {
-                    ErrorMessage = "Por favor, ingresa tu usuario y contraseña.";
-                    OnPostBtClean(); // Limpia los campos
-                    return Page(); // Vuelve a la página actual con el mensaje de error
+                    Message = "Por favor, ingresa tu usuario y contraseña.";
+                    return Page();
                 }
 
-                // 2. Prepara los datos para enviar a la capa de comunicaciones
                 var datosInput = new Dictionary<string, object>
                 {
-                    ["UserName"] = UserName!, // Usa el UserName enlazado
-                    ["Password"] = Password!  // Usa el Password enlazado
+                    { "UserName", UserName! },
+                    { "Password", Password! }
                 };
 
-                // 3. Llama al método Autenticar de la clase Comunicaciones
-                // No construyas la URL aquí, asume que Comunicaciones ya sabe su URL de autenticación
-                // datosInput["UrlToken"] = "Token/Autenticar"; // Esto ya lo maneja Comunicaciones internamente
+                // Usa la instancia _comunicaciones inyectada.
+                // Esta instancia ahora puede usar la sesión HTTP gracias a IHttpContextAccessor.
+                Dictionary<string, object> respuestaAutenticacion = await _comunicaciones.Autenticar(datosInput);
 
-                // Espera la respuesta de autenticación
-                // Asegúrate de que Autenticar de Comunicaciones devuelva un Dictionary<string, object> con 'Error' o 'Token'
-                Dictionary<string, object> respuestaAutenticacion = await com.Autenticar(datosInput);
-
-                // 4. Evalúa la respuesta de la autenticación
                 if (respuestaAutenticacion.ContainsKey("Error"))
                 {
-                    // Si la API devuelve un error (ej. credenciales inválidas)
-                    ErrorMessage = respuestaAutenticacion["Error"].ToString();
-                    OnPostBtClean(); // Limpia los campos
-                    return Page(); // Vuelve a la página con el error
+                    Message = respuestaAutenticacion["Error"].ToString();
+                    return Page();
                 }
                 else if (respuestaAutenticacion.ContainsKey("Token"))
                 {
-                    // Autenticación exitosa
-                    // Guarda el nombre de usuario en la sesión
+                    // Autenticación exitosa.
+                    // La clase Comunicaciones (versión corregida) ya guarda el token en la sesión.
+                    // Guardamos el UserName en sesión para la lógica de EstaLogueado y para mostrarlo.
                     HttpContext.Session.SetString("UserName", UserName!);
-                    // Puedes guardar el token también si lo necesitas para futuras llamadas desde el cliente o si tu PageModel necesita hacer llamadas autenticadas
-                    // HttpContext.Session.SetString("AuthToken", respuestaAutenticacion["Token"].ToString()!);
 
-                    EstaLogueado = true; // Actualiza el estado de login en el modelo
-                    OnPostBtClean(); // Limpia los campos del formulario
-                    return RedirectToPage("/Vistas/Home"); // Redirige al home
+                    EstaLogueado = true;
+                    Message = "¡Inicio de sesión exitoso!"; // Mensaje de éxito opcional
+                    return RedirectToPage("/Vistas/Home"); // Redirige a la página principal
                 }
                 else
                 {
-                    // Caso de respuesta inesperada de la API (no hay Token ni Error)
-                    ErrorMessage = "La respuesta del servidor no fue la esperada. Contacta a soporte.";
-                    OnPostBtClean();
+                    Message = "Respuesta inesperada del servidor de autenticación.";
                     return Page();
                 }
             }
             catch (Exception ex)
             {
-                // Captura cualquier error inesperado en la lógica del PageModel o la comunicación
-                LogConversor.Log(ex, ViewData!);
-                ErrorMessage = "Ha ocurrido un error inesperado. Por favor, inténtalo de nuevo.";
-                OnPostBtClean();
+                // Considera un logging más robusto aquí en un entorno de producción
+                Console.WriteLine($"EXCEPCION en OnPostBtEnter: {ex}");
+                Message = "Ha ocurrido un error inesperado durante el inicio de sesión. Por favor, inténtalo de nuevo.";
                 return Page();
             }
         }
 
-        public IActionResult OnPostBtClose()
+        public IActionResult OnPostBtClose() // Para cerrar sesión
         {
-            try
-            {
-                // Limpia toda la sesión
-                HttpContext.Session.Clear();
-                EstaLogueado = false; // Actualiza el estado de login
-                return RedirectToPage("/Index"); // Redirige a la página de login
-            }
-            catch (Exception ex)
-            {
-                LogConversor.Log(ex, ViewData!);
-                return Page();
-            }
+            // La clase Comunicaciones podría tener un método para invalidar/limpiar el token si es necesario
+            // _comunicaciones.CerrarSesion(); 
+
+            HttpContext.Session.Clear(); // Limpia todas las claves de la sesión
+            EstaLogueado = false;
+            Message = "Has cerrado sesión.";
+            return RedirectToPage("/Index"); // Redirige a la página de login
         }
     }
 }
