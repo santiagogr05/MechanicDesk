@@ -13,16 +13,18 @@ namespace asp_presentacion.Pages.Vistas
         public List<Users> ListaUsuarios { get; set; } = new();
         [BindProperty]
         public Users NewUser { get; set; } = new();
-        public SelectList? RolesList { get; set; };
+        public SelectList? RolesList { get; set; } 
         private readonly IUsersPresentacion _usersPresentacion;
+        
 
         private readonly Comunicaciones _comunicaciones;
         public UsersModel(Comunicaciones? comunicaciones, IUsersPresentacion usersPresentacion)
         {
             _comunicaciones = comunicaciones!;
             _usersPresentacion = usersPresentacion;
+
         }
-        public async Task<IActionResult> OnGetAsync()
+        public async Task OnGetAsync()
         {
             var datos = _comunicaciones.ConstruirUrl(new(), "Users/Listar");
             var respuesta = await _comunicaciones.Ejecutar(datos);
@@ -30,7 +32,6 @@ namespace asp_presentacion.Pages.Vistas
             if (respuesta.ContainsKey("Error"))
             {
                 ModelState.AddModelError(string.Empty, respuesta["Error"].ToString()!);
-                return Page();
             }
 
             if (respuesta.ContainsKey("Entidades"))
@@ -38,9 +39,21 @@ namespace asp_presentacion.Pages.Vistas
                 ListaUsuarios = JsonConversor.ConvertirAObjeto<List<Users>>(respuesta["Entidades"].ToString() ?? "[]");
 
             }
-            return Page();
+            var availableRoles = await GetAvailableRolesAsync();
+            RolesList = new SelectList(availableRoles, "Id", "RoleName");
         }
 
+        private async Task<List<Roles>> GetAvailableRolesAsync()
+        {
+          
+            await Task.Delay(10);
+
+            return new List<Roles>
+            {
+                new Roles { Id = 1, RoleName = "Admin" },    
+                new Roles { Id = 2, RoleName = "Mecanico" }  
+            };
+        }
         public async Task<IActionResult> OnPostAddUserAsync()
         {
             if (!ModelState.IsValid)

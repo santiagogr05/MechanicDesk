@@ -50,9 +50,9 @@
         </div>
 
         <div class="form-group">
-            <label asp-for="NewUser.Password"></label>
-            <input asp-for="NewUser.Password" type="password" class="form-control" />
-            <span asp-validation-for="NewUser.Password" class="text-danger"></span>
+            <label asp-for="NewUser.PasswordHash"></label>
+            <input asp-for="NewUser.PasswordHash" type="password" class="form-control" />
+            <span asp-validation-for="NewUser.PasswordHash" class="text-danger"></span>
         </div>
 
         <div class="form-group">
@@ -69,15 +69,6 @@
             }
             <span asp-validation-for="NewUser.RoleId" class="text-danger"></span>
         </div>
-
-        @* Aquí puedes añadir más campos para la entidad Users si los tienes (Email, Nombre, etc.) *@
-        @*
-        <div class="form-group">
-            <label asp-for="NewUser.Email"></label>
-            <input asp-for="NewUser.Email" class="form-control" />
-            <span asp-validation-for="NewUser.Email" class="text-danger"></span>
-        </div>
-        *@
 
         <button type="submit" class="btn-submit">Guardar Usuario</button>
     </form>

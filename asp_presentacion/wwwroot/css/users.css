@@ -60,6 +60,72 @@
     border-radius: 4px;
 }
 
+.add-user-form {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    background-color: #767B7F;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+}
+
+add-user-form > h3 {
+    color: black;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-size: 1.2rem;
+}
+add-user-form .form-group {
+    width: 80%;
+    margin-bottom: 1.25rem;
+}
+
+.add-user-form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #444;
+    font-weight: 500;
+}
+
+.add-user-form .form-control {
+    width: 100%;
+    padding: 0.6rem 1rem;
+    border: 1px solid #eaeaea;
+    border-radius: 4px;
+    background: #fafafa;
+    font-size: 1rem;
+    transition: border-color 0.2s;
+}
+
+    .add-user-form .form-control:focus {
+        border-color: #0078d7;
+        outline: none;
+        background: #fff;
+    }
+
+.add-user-form .btn-submit {
+    background: #B9CDB1;
+    color: black;
+    border: none;
+    padding: 0.7rem 1.5rem;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+    .add-user-form .btn-submit:hover {
+        background: #005fa3;
+    }
+
+.add-user-form .text-danger {
+    color: #d32f2f;
+    font-size: 0.95rem;
+    margin-top: 0.25rem;
+    display: block;
+}
+
 @media (max-width: 768px) {
     .auditoria-table {
         display: block;
