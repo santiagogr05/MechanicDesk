@@ -107,7 +107,7 @@ namespace asp_servicios.Controllers
                 var tokenHandler = new JwtSecurityTokenHandler();
                 var token = tokenHandler.ReadToken(authorizationHeader) as JwtSecurityToken;
                
-                if (DateTime.UtcNow > token.ValidTo)
+                if (DateTime.UtcNow > token!.ValidTo)
                     return false;
                 return true;
 

@@ -8,6 +8,5 @@ namespace lib_dominio.Entidades
         public string? Operacion { get; set; }
         public DateTime? Fecha { get; set; }
         public string? Usuario { get; set; }
-        public string? Datos { get; set; }
     }
 }

@@ -1,0 +1,45 @@
+﻿@page
+@model asp_presentacion.Pages.Vistas.AuditoryModel
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/auditory.css?v=@DateTime.Now.Ticks" />
+}
+
+@{
+}
+
+<header>
+    <partial name="_Navbar" />
+</header>
+
+<section class="list-container">
+    <h2>Auditoría</h2>
+    @if (Model.ListaAuditoria.Any() == true)
+    {
+        <table class="auditoria-table">
+            <thead>
+                <tr>
+                    <th>Tabla</th>
+                    <th>Operación</th>
+                    <th>Fecha</th>
+                    <th>Usuario</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var registro in Model.ListaAuditoria)
+                {
+                    <tr>
+                        <td>@registro.Tabla</td>
+                        <td>@registro.Operacion</td>
+                        <td>@registro.Fecha.ToString()</td>
+                        <td>@registro.Usuario</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No hay registro de auditoria</p>
+    }
+</section>
