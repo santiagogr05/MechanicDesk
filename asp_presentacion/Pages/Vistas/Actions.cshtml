@@ -1,0 +1,44 @@
+﻿@page
+@model asp_presentacion.Pages.Vistas.HomeModel
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/home.css?v=@DateTime.Now.Ticks" />
+}
+
+@{
+}
+
+<header>
+    <partial name="_Navbar" />
+</header>
+
+<div class="cards">
+
+    <div class="option-card">
+        <a asp-page="/Vistas/Users">
+            <img src="~/images/users.png" />
+            Usuarios
+        </a>
+    </div>
+
+    <div class="option-card">
+        <a asp-page="/Vistas/Auditory">
+            <img src="~/images/registration.png" />
+            Auditoria
+
+        </a>
+    </div>
+
+    
+
+    <div class="option-card">
+        <a asp-page="/Vistas/Services">
+            <img src="~/images/repair.png" />
+            Servicios
+        </a>
+    </div>
+
+    
+</div>
+
+

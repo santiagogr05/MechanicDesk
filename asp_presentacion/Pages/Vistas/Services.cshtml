@@ -1,0 +1,68 @@
+﻿@page
+@model asp_presentacion.Pages.Vistas.ServicesModel
+@section Styles {
+    <link rel="stylesheet" href="~/css/services.css?v=@DateTime.Now.Ticks" />
+}
+@{
+}
+<header>
+    <partial name="_Navbar" />
+</header>
+
+<section class="list-container">
+    <h2>Servicios</h2>
+    @if (Model.ListaServicios.Any() == true)
+    {
+        <table class="services-table">
+            <thead>
+                <tr>
+                    <th>Nombre del servicio</th>
+                    <th>Referencia</th>
+                    <th>Precio</th>
+                    <th>Tiempo estimado</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var registro in Model.ListaServicios)
+                {
+                    <tr>
+                        <td>@registro.ServiceName</td>
+                        <td>@registro.Reference</td>
+                        <td>@registro.Price</td>
+                        <td>@registro.StimatedTime</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No hay registro de Servicios</p>
+    }
+</section>
+<section class="add-service-form">
+    <h3>Añadir Nuevo Servicio</h3>
+    <form method="post" asp-page-handler="AddService">
+        <div class="form-group">
+            <label asp-for="NewService.ServiceName"></label>
+            <input asp-for="NewService.ServiceName" class="form-control" />
+            <span asp-validation-for="NewService.ServiceName" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="NewService.Reference"></label>
+            <input asp-for="NewService.Reference" class="form-control" />
+            <span asp-validation-for="NewService.Reference" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="NewService.Price"></label>
+            <input asp-for="NewService.Price" type="number" step="0.01" class="form-control" />
+            <span asp-validation-for="NewService.Price" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="NewService.StimatedTime"></label>
+            <input asp-for="NewService.StimatedTime" type="number" step="0.01" class="form-control" />
+            <span asp-validation-for="NewService.StimatedTime" class="text-danger"></span>
+        </div>
+        <button type="submit" class="btn btn-primary">Añadir Servicio</button>
+    </form>
+<section/>
